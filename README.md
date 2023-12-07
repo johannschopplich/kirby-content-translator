@@ -110,6 +110,42 @@ sections:
     #   de: Übersetzer
 ```
 
+### Skip Dialogs Before Synchronising/Translating
+
+To make sure an editor doesn't accidentally synchronise or translate content and thus overwrite existing translations, a confirmation dialog is displayed before the process is started. If you want to skip this dialog, you can set the `confirm` key to `false`:
+
+```yml
+sections:
+  contentTranslator:
+    type: content-translator
+    confirm: false
+```
+
+### Global Configuration Defaults
+
+Instead of defining the configuration in every blueprint, you can also define global defaults in your config file. This is especially useful if, for example, every page's blocks should be translated the same way.
+
+> [!NOTE]
+> Local blueprint configurations will always override global defaults.
+
+```php
+return [
+    'johannschopplich.content-translator' => [
+        'syncableFields' => ['text', 'description'],
+        'translatableFields' => ['text', 'description'],
+        'translatableBlocks' => [
+            'heading' => ['text'],
+            'text' => ['text'],
+            'image' => ['alt', 'caption']
+        ],
+        'confirm' => false,
+        'DeepL' => [
+            'apiKey' => env('DEEPL_API_KEY')
+        ]
+    ]
+]
+```
+
 ### Custom Translator Function
 
 Instead of using the DeepL API, you can define a custom translator callback that accepts the text to be translated, the source language code and the target language code.
@@ -123,17 +159,6 @@ return [
         }
     ]
 ];
-```
-
-### Skip Dialogs Before Synchronising/Translating
-
-To make sure an editor doesn't accidentally synchronise or translate content and thus overwrite existing translations, a confirmation dialog is displayed before the process is started. If you want to skip this dialog, you can set the `confirm` key to `false`:
-
-```yml
-sections:
-  contentTranslator:
-    type: content-translator
-    confirm: false
 ```
 
 ## License

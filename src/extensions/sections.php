@@ -12,7 +12,12 @@ return [
             'translatableBlocks' => fn ($translatableBlocks = null) => $translatableBlocks
         ],
         'computed' => [
-            'config' => fn () => option('johannschopplich.content-translator', [])
+            'config' => function () {
+                /** @var \Kirby\Cms\App $kirby */
+                $kirby = $this->kirby();
+
+                return $kirby->option('johannschopplich.content-translator', []);
+            }
         ]
     ],
     'serp-preview' => [

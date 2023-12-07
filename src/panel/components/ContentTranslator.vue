@@ -46,7 +46,7 @@ export default {
     this.label =
       this.t(response.label) ||
       this.$t("johannschopplich.content-translator.label");
-    this.confirm = response.confirm ?? true;
+    this.confirm = response.confirm ?? response.config.confirm ?? true;
     this.translatableFields =
       response.translatableFields ?? response.config.translatableFields ?? [];
     this.syncableFields =
