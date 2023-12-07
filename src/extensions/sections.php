@@ -5,7 +5,11 @@ use Kirby\Toolkit\I18n;
 return [
     'content-translator' => [
         'props' => [
-            'label' => fn ($label = null) => I18n::translate($label, $label)
+            'label' => fn ($label = null) => I18n::translate($label, $label),
+            'confirm' => fn ($confirm = true) => $confirm,
+            'syncableFields' => fn ($syncableFields = null) => $syncableFields,
+            'translatableFields' => fn ($translatableFields = null) => $translatableFields,
+            'translatableBlocks' => fn ($translatableBlocks = null) => $translatableBlocks
         ],
         'computed' => [
             'config' => fn () => option('johannschopplich.content-translator', [])

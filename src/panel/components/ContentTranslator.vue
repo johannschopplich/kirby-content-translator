@@ -9,6 +9,10 @@ export default {
   data() {
     return {
       label: undefined,
+      confirm: true,
+      translatableFields: [],
+      syncableFields: [],
+      translatableBlocks: [],
       config: {},
       defaultLanguage: this.$panel.languages.find(
         (language) => language.default,
@@ -24,14 +28,14 @@ export default {
     translatableContent() {
       return Object.fromEntries(
         Object.entries(this.currentContent).filter(([key]) =>
-          (this.config.translatableFields ?? []).includes(key),
+          this.translatableFields.includes(key),
         ),
       );
     },
     syncableContent() {
       return Object.fromEntries(
         Object.entries(this.defaultContent).filter(([key]) =>
-          (this.config.syncableFields ?? []).includes(key),
+          this.syncableFields.includes(key),
         ),
       );
     },
@@ -42,6 +46,13 @@ export default {
     this.label =
       this.t(response.label) ||
       this.$t("johannschopplich.content-translator.label");
+    this.confirm = response.confirm ?? true;
+    this.translatableFields =
+      response.translatableFields ?? response.config.translatableFields ?? [];
+    this.syncableFields =
+      response.syncableFields ?? response.config.syncableFields ?? [];
+    this.translatableBlocks =
+      response.translatableBlocks ?? response.config.translatableBlocks ?? [];
     this.config = response.config;
 
     const updateDefaultContent = async () => {
@@ -77,7 +88,7 @@ export default {
         await this.recursiveTranslateContent(clone, {
           sourceLanguage: this.defaultLanguage.code,
           targetLanguage: language.code,
-          translatableBlocks: this.config.translatableBlocks,
+          translatableBlocks: this.translatableBlocks,
         });
       } catch (error) {
         console.error(error);
@@ -102,6 +113,11 @@ export default {
       return content;
     },
     openModal(text, callback) {
+      if (!this.confirm) {
+        callback?.();
+        return;
+      }
+
       this.$panel.dialog.open({
         component: "k-text-dialog",
         props: { text },

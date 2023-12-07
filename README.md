@@ -2,9 +2,7 @@
 
 # Kirby Content Translator
 
-Sometimes you find yourself copying content to your clipboard, only to paste it into the translation service of your choice. This plugin aims to simplify this process by providing a simple interface for translating your content.
-
-You define a set of fields to be translated and the plugin will automatically translate the content for you. You can also define a set of fields that should be synchronised from the default language to the other languages.
+Sometimes you may find yourself copying content from Kirby fields to your clipboard, only to paste it into a translation service of your choice. This plugin aims to simplify the translation process by providing a simple interface for translating a model's content while giving full flexibility on which fields should be translated.
 
 ## Key Features
 
@@ -50,22 +48,44 @@ In order to use the DeepL API, you have to [create an account](https://www.deepl
 
 ### Configuration
 
+First, set up the Panel section in one of your blueprints, e.g. a page blueprint and configure the fields that should be synchronised and translated:
+
+- The `syncableFields` key defines the fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language.
+- The `translatableFields` key defines the fields that should be translated when the user clicks the translate button.
+
+Below you will find an example configuration to display the section in the Panel:
+
+```yml
+sections:
+  contentTranslator:
+    type: content-translator
+    # Define field names which should be synced from the default language to other languages
+    syncableFields:
+      - text
+      - description
+      - tags
+    # Define field names that should be translated
+    translatableFields:
+      - text
+      - description
+    # Define the field names inside blocks which should be translated
+    translatableBlocks:
+      # Example: translate the `text` field of the `heading` block
+      heading:
+        - text
+      text:
+        - text
+      image:
+        - alt
+        - caption
+```
+
+Finally, store the DeepL API key in your config file:
+
 ```php
 # /site/config/config.php
 return [
     'johannschopplich.content-translator' => [
-        // Define field names which should be synced from the default language
-        // to the other languages
-        'syncableFields' => ['text', 'description', 'tags'],
-        // Define field names that should be translated
-        'translatableFields' => ['text', 'description'],
-        // Define the field names inside blocks which should be translated
-        'translatableBlocks' => [
-            // Example: translate the `text` field of the `heading` block
-            'heading' => ['text'],
-            'text' => ['text'],
-            'image' => ['alt', 'caption']
-        ],
         // API key for the DeepL API
         'DeepL' => [
             'apiKey' => 'abc123…'
@@ -74,22 +94,14 @@ return [
 ];
 ```
 
-#### Panel Section
-
-To display the translation Panel section, you have to add the following snippet to your panel blueprint.
-
-```yml
-sections:
-  contentTranslator:
-    type: content-translation
-```
+### Section Label
 
 Optionally, you can translate the section label by adding a `label` key:
 
 ```yml
 sections:
   contentTranslator:
-    type: content-translation
+    type: content-translator
     # Either use a single label for all languages
     label: Translator
     # Or use language codes for multilingual labels
@@ -98,7 +110,7 @@ sections:
     #   de: Übersetzer
 ```
 
-#### Custom Translator Function
+### Custom Translator Function
 
 Instead of using the DeepL API, you can define a custom translator callback that accepts the text to be translated, the source language code and the target language code.
 
@@ -113,10 +125,19 @@ return [
 ];
 ```
 
-## Special Thanks
+### Skip Dialogs Before Synchronising/Translating
 
-- [Dennis Baum](https://github.com/dennisbaum) for sponsoring the initial version of this package. 🙏
+To make sure an editor doesn't accidentally synchronise or translate content and thus overwrite existing translations, a confirmation dialog is displayed before the process is started. If you want to skip this dialog, you can set the `confirm` key to `false`:
+
+```yml
+sections:
+  contentTranslator:
+    type: content-translator
+    confirm: false
+```
 
 ## License
 
 [MIT](./LICENSE) License © 2023-PRESENT [Johann Schopplich](https://github.com/johannschopplich)
+
+[MIT](./LICENSE) License © 2023-PRESENT [Dennis Baum](https://github.com/dennisbaum)
