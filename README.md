@@ -166,6 +166,7 @@ Instead of defining the configuration in every blueprint, you can also define gl
 > Local blueprint configurations will always override global defaults.
 
 ```php
+# /site/config/config.php
 return [
     'johannschopplich.content-translator' => [
         'syncableFields' => ['text', 'description'],
