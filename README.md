@@ -107,7 +107,7 @@ The following blueprint configuration options are available for the `content-tra
 | `syncableFields`     | `array`             | `[]`                                                        | The fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language. |
 | `translatableFields` | `array`             | `[]`                                                        | The fields that should be translated when the user clicks the translate button.                                                                                 |
 | `translatableBlocks` | `array`             | `[]`                                                        | The block names and their corresponding fields that should be translated when the user clicks the translate button.                                             |
-| `label`              | `string` or `array` | See [./src/extensions/translations.php](`translations.php`) | Optionally, you can translate the section label.                                                                                                                |
+| `label`              | `string` or `array` | See [`translations.php`](./src/extensions/translations.php) | Optionally, you can translate the section label.                                                                                                                |
 | `confirm`            | `boolean`           | `true`                                                      | Disable the confirmation dialog before either the synchronisation or translation process is started.                                                            |
 
 > [!TIP]
