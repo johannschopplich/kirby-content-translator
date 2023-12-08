@@ -2,11 +2,17 @@
 
 # Kirby Content Translator
 
-Sometimes you may find yourself copying content from Kirby fields to your clipboard, only to paste it into a translation service of your choice. This plugin aims to simplify the translation process by providing a simple interface for translating a model's content, while allowing full flexibility in choosing which fields to translate.
+Sometimes you may find yourself copying content from Kirby fields to your clipboard, only to paste it into a translation service of your choice. This plugin aims to simplify the translation process by providing a simple interface for translating a model's content (page, file, etc.), while allowing full flexibility in choosing which fields to translate.
+
+With a single click, an editor can:
+
+1. Synchronise content from the default language to the secondary language.
+2. Translate content using the DeepL API or a custom translation service.
 
 ## Key Features
 
-- 🌐 Translate writer, blocks and other fields with one click!
+- 🌐 Translate **writer**, **blocks** and other fields with one click!
+- 🧮 Configure which fields should be translated
 - 🌝 Panel buttons
 - 🧩 Use DeepL API or custom translation service
 
@@ -48,10 +54,10 @@ In order to use the DeepL API, you have to [create an account](https://www.deepl
 
 First, set up the Panel section in one of your blueprints, e.g. a page blueprint and configure the fields that should be synchronised and translated:
 
-- The `syncableFields` key defines the fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language.
+- The `syncableFields` key defines the fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language and clicks the synchronise button.
 - The `translatableFields` key defines the fields that should be translated when the user clicks the translate button.
 
-Below you will find an example configuration to display the section in the Panel:
+Below is an example configuration with common configuration options:
 
 ```yml
 sections:
