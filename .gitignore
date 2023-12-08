@@ -3,7 +3,7 @@
 
 # Vendor files
 /node_modules
-# /vendor
+/vendor
 
 # Cache and temporary files
 /.cache
