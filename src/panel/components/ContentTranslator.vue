@@ -25,20 +25,20 @@ export default {
     currentContent() {
       return this.$store.getters["content/values"]();
     },
-  },
-  syncableContent() {
-    return Object.fromEntries(
-      Object.entries(this.defaultContent).filter(([key]) =>
-        this.syncableFields.includes(key),
-      ),
-    );
-  },
-  translatableContent() {
-    return Object.fromEntries(
-      Object.entries(this.currentContent).filter(([key]) =>
-        this.translatableFields.includes(key),
-      ),
-    );
+    syncableContent() {
+      return Object.fromEntries(
+        Object.entries(this.defaultContent).filter(([key]) =>
+          this.syncableFields.includes(key),
+        ),
+      );
+    },
+    translatableContent() {
+      return Object.fromEntries(
+        Object.entries(this.currentContent).filter(([key]) =>
+          this.translatableFields.includes(key),
+        ),
+      );
+    },
   },
 
   async created() {
