@@ -104,6 +104,9 @@ The following blueprint configuration options are available for the `content-tra
 | `label`              | `string` or `array` | (See [./src/extensions/translations.php](`translations.php`) | Optionally, you can translate the section label.                                                                                                                |
 | `confirm`            | `boolean`           | `true`                                                       | Disable the confirmation dialog before either the synchronisation or translation process is started.                                                            |
 
+> [!TIP]
+> If no `syncableFields` are defined, the button to synchronise content will not be displayed.
+
 ### Section Label
 
 Optionally, you can translate the section label by adding a `label` key:

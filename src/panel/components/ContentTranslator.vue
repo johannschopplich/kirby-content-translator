@@ -10,8 +10,8 @@ export default {
     return {
       label: undefined,
       confirm: true,
-      translatableFields: [],
       syncableFields: [],
+      translatableFields: [],
       translatableBlocks: [],
       config: {},
       defaultLanguage: this.$panel.languages.find(
@@ -25,20 +25,20 @@ export default {
     currentContent() {
       return this.$store.getters["content/values"]();
     },
-    translatableContent() {
-      return Object.fromEntries(
-        Object.entries(this.currentContent).filter(([key]) =>
-          this.translatableFields.includes(key),
-        ),
-      );
-    },
-    syncableContent() {
-      return Object.fromEntries(
-        Object.entries(this.defaultContent).filter(([key]) =>
-          this.syncableFields.includes(key),
-        ),
-      );
-    },
+  },
+  syncableContent() {
+    return Object.fromEntries(
+      Object.entries(this.defaultContent).filter(([key]) =>
+        this.syncableFields.includes(key),
+      ),
+    );
+  },
+  translatableContent() {
+    return Object.fromEntries(
+      Object.entries(this.currentContent).filter(([key]) =>
+        this.translatableFields.includes(key),
+      ),
+    );
   },
 
   async created() {
@@ -146,14 +146,22 @@ export default {
     >
       <k-text>
         You need to set the either a custom <code>translateFn</code> or the
-        <code>DeepL.apiKey</code> option in the
-        <code>johannschopplich.content-translator</code> namespace in your
-        <code>config.php</code>.
+        <code>DeepL.apiKey</code> option for the
+        <code>johannschopplich.content-translator</code> namespace in your Kirby
+        configuration.
+      </k-text>
+    </k-box>
+    <k-box v-if="!translatableFields.length" theme="info">
+      <k-text>
+        You have to define at least one translatable field for the
+        <code>translatableFields</code> blueprint or in your Kirby
+        configuration.
       </k-text>
     </k-box>
     <k-box v-else theme="none">
       <k-button-group layout="collapsed">
         <k-button
+          v-show="syncableFields.length"
           :disabled="$panel.language.default"
           size="sm"
           variant="filled"
