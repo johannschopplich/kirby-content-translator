@@ -46,7 +46,11 @@ export default {
           } else {
             // Detect and handle fields inside blocks
             for (const block of obj[key]) {
-              if (!isObject(block.content) || !block.id || block.isHidden)
+              if (
+                !isObject(block.content) ||
+                !block.id ||
+                block.isHidden === false
+              )
                 continue;
 
               if (!Object.keys(translatableBlocks).includes(block.type))
