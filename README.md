@@ -2,19 +2,19 @@
 
 # Kirby Content Translator
 
-Sometimes you may find yourself copying content from Kirby fields to your clipboard, only to paste it into a translation service of your choice. This plugin aims to simplify the translation process by providing a simple interface for translating a model's content while giving full flexibility on which fields should be translated.
+Sometimes you may find yourself copying content from Kirby fields to your clipboard, only to paste it into a translation service of your choice. This plugin aims to simplify the translation process by providing a simple interface for translating a model's content, while allowing full flexibility in choosing which fields to translate.
 
 ## Key Features
 
-- 🌐 Translate page and block fields with one click!
+- 🌐 Translate writer, blocks and other fields with one click!
 - 🌝 Panel buttons
 - 🧩 Use DeepL API or custom translation service
 
 ## Preview
 
-For the following preview, I used the [default configuration](#configuration) to synchronise the `description` and `text` fields, which are a **writer** and **blocks** field, respectively.
+For the following preview, I used the [example section blueprint](#panel-section) to synchronise the `description` and `text` fields, which are of type **writer** and **blocks**, respectively.
 
-The default language in the example is English. The secondary language is German, to which the content is first synchronised and then translated.
+The default language in the example is English. The secondary language is German, to which the content is first synchronised (copied) and then translated.
 
 ![Preview of the Kirby Content Translator Panel section](./.github/panel-preview.gif)
 
@@ -36,17 +36,15 @@ composer require johannschopplich/kirby-content-translator
 
 Download and copy this repository to `/site/plugins/kirby-content-translator`.
 
-## Setup
+## Getting Started
 
-### Deepl Account
+### DeepL Account
 
 By default, this plugin uses the [DeepL API](https://www.deepl.com) to translate your content. You can use any other translation service by defining a custom translator function (see below).
 
 In order to use the DeepL API, you have to [create an account](https://www.deepl.com/de/pro-api) and [generate an API key](https://www.deepl.com/de/account/summary).
 
-## Usage
-
-### Configuration
+### Panel Section
 
 First, set up the Panel section in one of your blueprints, e.g. a page blueprint and configure the fields that should be synchronised and translated:
 
@@ -93,6 +91,18 @@ return [
     ]
 ];
 ```
+
+## Configuration
+
+The following blueprint configuration options are available for the `content-translator` Panel section:
+
+| Key                  | Type                | Default                                                      | Description                                                                                                                                                     |
+| -------------------- | ------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `syncableFields`     | `array`             | `[]`                                                         | The fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language. |
+| `translatableFields` | `array`             | `[]`                                                         | The fields that should be translated when the user clicks the translate button.                                                                                 |
+| `translatableBlocks` | `array`             | `[]`                                                         | The block names and their corresponding fields that should be translated when the user clicks the translate button.                                             |
+| `label`              | `string` or `array` | (See [./src/extensions/translations.php](`translations.php`) | Optionally, you can translate the section label.                                                                                                                |
+| `confirm`            | `boolean`           | `true`                                                       | Disable the confirmation dialog before either the synchronisation or translation process is started.                                                            |
 
 ### Section Label
 
