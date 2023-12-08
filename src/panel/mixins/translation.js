@@ -49,7 +49,7 @@ export default {
               if (
                 !isObject(block.content) ||
                 !block.id ||
-                block.isHidden === false
+                block.isHidden === true
               )
                 continue;
 
