@@ -2,7 +2,7 @@
   "name": "johannschopplich/kirby-content-translator",
   "description": "Kirby Panel plugin for field and blocks translation with DeepL or other services",
   "type": "kirby-plugin",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "keywords": [
     "content",
     "kirby",
@@ -22,10 +22,7 @@
     }
   ],
   "require": {
-    "getkirby/composer-installer": "^1.2",
-    "deeplcom/deepl-php": "^1.6",
-    "symfony/http-client": "^7.0",
-    "nyholm/psr7": "^1.8"
+    "getkirby/composer-installer": "^1.2"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "@stable",
@@ -38,8 +35,7 @@
   "config": {
     "optimize-autoloader": true,
     "allow-plugins": {
-      "getkirby/composer-installer": true,
-      "php-http/discovery": true
+      "getkirby/composer-installer": true
     }
   },
   "extra": {

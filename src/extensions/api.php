@@ -1,5 +1,6 @@
 <?php
 
+use Kirby\Http\Remote;
 use Kirby\Http\Response;
 
 return [
@@ -22,17 +23,49 @@ return [
 
                 $translateFn = $kirby->option('johannschopplich.content-translator.translateFn');
 
+                // Default to DeepL API
                 if (!$translateFn || !is_callable($translateFn)) {
-                    if (!class_exists(DeepL\Translator::class)) {
+                    $authKey = $kirby->option('johannschopplich.content-translator.DeepL.apiKey');
+                    $apiUrlFree = 'https://api-free.deepl.com/v2/translate';
+                    $apiUrlPro = 'https://api.deepl.com/v2/translate';
+                    $isAuthKeyFreeAccount = substr($authKey, -3) === ':fx';
+
+                    if (empty($authKey)) {
                         return Response::json([
                             'code' => 500,
                             'status' => 'Internal Server Error'
                         ], 500);
                     }
 
-                    $authKey = $kirby->option('johannschopplich.content-translator.DeepL.apiKey');
-                    $translator = new \DeepL\Translator($authKey);
-                    $translateFn = fn ($text, $sourceLanguage, $targetLanguage) => $translator->translateText($text, null, $targetLanguage);
+                    $response = Remote::request($isAuthKeyFreeAccount ? $apiUrlFree : $apiUrlPro, [
+                        'method' => 'POST',
+                        'headers' => [
+                            'Authorization' => 'DeepL-Auth-Key ' . $authKey,
+                            'Content-Type' => 'application/json'
+                        ],
+                        'data' => json_encode([
+                            'text' => [$text],
+                            // 'source_lang' => strtoupper($sourceLanguage),
+                            'target_lang' => strtoupper($targetLanguage)
+                        ])
+                    ]);
+
+                    $data = $response->json();
+
+                    if ($response->code() !== 200 || !isset($data['translations'][0]['text'])) {
+                        return Response::json([
+                            'code' => 500,
+                            'status' => 'Internal Server Error'
+                        ], 500);
+                    }
+
+                    return Response::json([
+                        'code' => 201,
+                        'status' => 'Created',
+                        'result' => [
+                            'text' => $data['translations'][0]['text']
+                        ]
+                    ], 201);
                 }
 
                 $result = $translateFn($text, $sourceLanguage, $targetLanguage);
@@ -41,7 +74,7 @@ return [
                     'code' => 201,
                     'status' => 'Created',
                     'result' => [
-                        'text' => $result->text
+                        'text' => $result
                     ]
                 ], 201);
             }

@@ -182,14 +182,15 @@ return [
 
 ### Custom Translator Function
 
-Instead of using the DeepL API, you can define a custom translator callback that accepts the text to be translated, the source language code and the target language code.
+Instead of using the DeepL API, you can define a custom translator callback that accepts the text to be translated, the source language code and the target language code. The plugin expects a string to be returned.
 
 ```php
 # /site/config/config.php
 return [
     'johannschopplich.algolia-docsearch' => [
-        'translateFn' => function (string $text, string|null $sourceLanguageCode, string $targetLanguageCode) {
-          return myCustomTranslateFunction($text, $sourceLanguageCode, $targetLanguageCode);
+        'translateFn' => function (string $text, string|null $sourceLanguageCode, string $targetLanguageCode): string {
+            // Your custom translation logic
+            return myCustomTranslateFunction($text, $sourceLanguageCode,   $targetLanguageCode);
         }
     ]
 ];

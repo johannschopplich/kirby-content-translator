@@ -29,9 +29,11 @@ return [
                     'video' => ['caption']
                 ];
 
-                // Check if `apiKey` is set, but don't return it for security reasons
+                // Don't leak the API key to the Panel frontend
                 if (isset($config['DeepL']['apiKey'])) {
-                    $config['DeepL']['apiKey'] = !empty($config['DeepL']['apiKey']);
+                    $config['DeepL'] = [
+                        'apiKey' => !empty($config['DeepL']['apiKey'])
+                    ];
                 }
 
                 return $config;
