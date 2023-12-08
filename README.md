@@ -72,17 +72,10 @@ sections:
     translatableFields:
       - text
       - description
-    # Define the field names inside blocks which should be translated
-    translatableBlocks:
-      # Example: translate the `text` field of the `heading` block
-      heading:
-        - text
-      text:
-        - text
-      image:
-        - alt
-        - caption
 ```
+
+> [!TIP]
+> By default, all built-in Kirby blocks that include a text-like field are pre-configured to be translated. You can override this behaviour by defining your own [`translatableBlocks` configuration](#translatable-blocks).
 
 Finally, store the DeepL API key in your config file:
 
@@ -102,16 +95,41 @@ return [
 
 The following blueprint configuration options are available for the `content-translator` Panel section:
 
-| Key                  | Type                | Default                                                     | Description                                                                                                                                                     |
-| -------------------- | ------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `syncableFields`     | `array`             | `[]`                                                        | The fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language. |
-| `translatableFields` | `array`             | `[]`                                                        | The fields that should be translated when the user clicks the translate button.                                                                                 |
-| `translatableBlocks` | `array`             | `[]`                                                        | The block names and their corresponding fields that should be translated when the user clicks the translate button.                                             |
-| `label`              | `string` or `array` | See [`translations.php`](./src/extensions/translations.php) | Optionally, you can translate the section label.                                                                                                                |
-| `confirm`            | `boolean`           | `true`                                                      | Disable the confirmation dialog before either the synchronisation or translation process is started.                                                            |
+| Key                  | Type                | Default                                                     | Description                                                                                                                                                                                     |
+| -------------------- | ------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `syncableFields`     | `array`             | `[]`                                                        | The fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language.                                 |
+| `translatableFields` | `array`             | `[]`                                                        | The fields that should be translated when the user clicks the translate button.                                                                                                                 |
+| `translatableBlocks` | `array`             | See [`sections.php`](./src/extensions/sections.php#L21-L30) | The block names and their corresponding fields that should be translated when the user clicks the translate button. By default, all Kirby blocks that include a text-like field are translated. |
+| `label`              | `string` or `array` | See [`translations.php`](./src/extensions/translations.php) | Optionally, you can translate the section label.                                                                                                                                                |
+| `confirm`            | `boolean`           | `true`                                                      | Disable the confirmation dialog before either the synchronisation or translation process is started.                                                                                            |
 
 > [!TIP]
 > If no `syncableFields` are defined, the button to synchronise content will not be displayed.
+
+### Translatable Blocks
+
+If you create custom Kirby blocks, you probably want to translate their content as well. To do so, you can define the block names and their corresponding fields that should be translated when the user clicks the translate button:
+
+```yml
+sections:
+  contentTranslator:
+    type: content-translator
+    # Given the `text` field is of type `blocks`
+    translatableFields:
+      - text
+    # Define the field names inside blocks which should be translated
+    translatableBlocks:
+      # Example: translate the `alt` and `caption` fields of the `myImage` block
+      myImage:
+        - alt
+        - caption
+      # Example: translate the `caption` field of the `myGridCard` block
+      myGridCard:
+        - caption
+```
+
+> [!NOTE]
+> The blocks configuration for built-in Kirby blocks is defined in [`sections.php`](./src/extensions/sections.php#L21-L30).
 
 ### Section Label
 
@@ -157,10 +175,7 @@ return [
             'text' => ['text'],
             'image' => ['alt', 'caption']
         ],
-        'confirm' => false,
-        'DeepL' => [
-            'apiKey' => env('DEEPL_API_KEY')
-        ]
+        'confirm' => false
     ]
 ]
 ```

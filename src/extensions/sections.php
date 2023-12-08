@@ -15,8 +15,26 @@ return [
             'config' => function () {
                 /** @var \Kirby\Cms\App $kirby */
                 $kirby = $this->kirby();
+                $config = $kirby->option('johannschopplich.content-translator', []);
 
-                return $kirby->option('johannschopplich.content-translator', []);
+                // Set default values
+                $config['translatableBlocks'] ??= [
+                    'gallery' => ['caption'],
+                    'heading' => ['text'],
+                    'image' => ['alt', 'caption'],
+                    'list' => ['text'],
+                    'markdown' => ['text'],
+                    'quote' => ['text', 'citation'],
+                    'text' => ['text'],
+                    'video' => ['caption']
+                ];
+
+                // Check if `apiKey` is set, but don't return it for security reasons
+                if (isset($config['DeepL']['apiKey'])) {
+                    $config['DeepL']['apiKey'] = !empty($config['DeepL']['apiKey']);
+                }
+
+                return $config;
             }
         ]
     ],
