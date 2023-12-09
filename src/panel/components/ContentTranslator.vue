@@ -59,14 +59,12 @@ export default {
     this.config = response.config ?? {};
 
     // Re-fetch default content whenever the page gets saved
-    this.$panel.events.on("model.update", () =>
-      this.updateModelDefaultContent(),
-    );
+    this.$panel.events.on("model.update", this.updateModelDefaultContent);
     this.updateModelDefaultContent();
   },
 
   beforeDestroy() {
-    this.$panel.events.off("model.update");
+    this.$panel.events.off("model.update", this.updateModelDefaultContent);
   },
 
   methods: {
