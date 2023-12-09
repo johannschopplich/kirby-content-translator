@@ -8,12 +8,15 @@ export default {
 
   data() {
     return {
+      // Section props
       label: undefined,
       confirm: true,
       syncableFields: [],
       translatableFields: [],
       translatableBlocks: [],
-      config: {},
+      // Section computed
+      config: undefined,
+      // Generic data
       defaultLanguage: this.$panel.languages.find(
         (language) => language.default,
       ),
@@ -53,7 +56,7 @@ export default {
       response.syncableFields ?? response.config.syncableFields ?? [];
     this.translatableBlocks =
       response.translatableBlocks ?? response.config.translatableBlocks ?? [];
-    this.config = response.config;
+    this.config = response.config ?? {};
 
     const updateDefaultContent = async () => {
       this.defaultContent = await this.getDefaultContent();
@@ -61,6 +64,10 @@ export default {
     // Re-fetch default content whenever the page gets saved
     this.$events.$on("model.update", updateDefaultContent);
     updateDefaultContent();
+  },
+
+  beforeDestroy() {
+    this.$events.$off("model.update");
   },
 
   methods: {
@@ -134,7 +141,7 @@ export default {
 </script>
 
 <template>
-  <k-section :label="label">
+  <k-section v-show="config" :label="label">
     <k-box v-if="!$panel.multilang" theme="info">
       <k-text>
         This section requires multi-language support to be enabled.
