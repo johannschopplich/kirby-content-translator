@@ -58,12 +58,11 @@ export default {
       response.translatableBlocks ?? response.config.translatableBlocks ?? [];
     this.config = response.config ?? {};
 
-    const updateDefaultContent = async () => {
-      this.defaultContent = await this.getDefaultContent();
-    };
     // Re-fetch default content whenever the page gets saved
-    this.$panel.events.on("model.update", updateDefaultContent);
-    updateDefaultContent();
+    this.$panel.events.on("model.update", () =>
+      this.updateModelDefaultContent(),
+    );
+    this.updateModelDefaultContent();
   },
 
   beforeDestroy() {
@@ -113,11 +112,12 @@ export default {
         this.$t("johannschopplich.content-translator.notification.translated"),
       );
     },
-    async getDefaultContent() {
+    async updateModelDefaultContent() {
       const { content } = await this.$api.get(this.$panel.view.path, {
         language: this.defaultLanguage.code,
       });
-      return content;
+
+      this.defaultContent = content;
     },
     openModal(text, callback) {
       if (!this.confirm) {
@@ -148,7 +148,7 @@ export default {
       </k-text>
     </k-box>
     <k-box
-      v-else-if="!config.translateFn && !config?.DeepL?.apiKey"
+      v-else-if="!config?.translateFn && !config?.DeepL?.apiKey"
       theme="none"
     >
       <k-text>
