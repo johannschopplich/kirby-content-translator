@@ -62,12 +62,12 @@ export default {
       this.defaultContent = await this.getDefaultContent();
     };
     // Re-fetch default content whenever the page gets saved
-    this.$events.$on("model.update", updateDefaultContent);
+    this.$panel.events.on("model.update", updateDefaultContent);
     updateDefaultContent();
   },
 
   beforeDestroy() {
-    this.$events.$off("model.update");
+    this.$panel.events.off("model.update");
   },
 
   methods: {
