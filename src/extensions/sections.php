@@ -39,29 +39,5 @@ return [
                 return $config;
             }
         ]
-    ],
-    'serp-preview' => [
-        'props' => [
-            'label' => fn ($label = null) => I18n::translate($label, $label)
-        ],
-        'computed' => [
-            'config' => function () {
-                /** @var \Kirby\Cms\App $kirby */
-                $kirby = $this->kirby();
-                $config = $kirby->option('johannschopplich.serp-preview', []);
-
-                // Set default values
-                $config['defaultLanguagePrefix'] ??= true;
-                $config['faviconUrl'] ??= null;
-                $config['siteTitle'] ??= $kirby->site()->title()->value();
-                $config['siteUrl'] ??= $kirby->site()->url();
-                $config['titleSeparator'] ??= '–';
-                $config['titleContentKey'] ??= null;
-                $config['descriptionContentKey'] ??= 'description';
-                $config['searchConsoleUrl'] ??= null;
-
-                return $config;
-            }
-        ]
     ]
 ];
