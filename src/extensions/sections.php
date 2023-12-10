@@ -48,11 +48,19 @@ return [
             'config' => function () {
                 /** @var \Kirby\Cms\App $kirby */
                 $kirby = $this->kirby();
+                $config = $kirby->option('johannschopplich.serp-preview', []);
 
-                return $kirby->option('johannschopplich.serp-preview', [
-                    'title' => $kirby->site()->title()->value(),
-                    'url' => $kirby->site()->url()
-                ]);
+                // Set default values
+                $config['defaultLanguagePrefix'] ??= true;
+                $config['faviconUrl'] ??= null;
+                $config['siteTitle'] ??= $kirby->site()->title()->value();
+                $config['siteUrl'] ??= $kirby->site()->url();
+                $config['titleSeparator'] ??= '–';
+                $config['titleContentKey'] ??= null;
+                $config['descriptionContentKey'] ??= 'description';
+                $config['searchConsoleUrl'] ??= null;
+
+                return $config;
             }
         ]
     ]

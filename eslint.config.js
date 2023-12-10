@@ -16,6 +16,7 @@ export default await antfu(
     },
     rules: {
       "vue/html-self-closing": "off",
+      "vue/html-indent": "off",
       "tailwindcss/classnames-order": "warn",
       "tailwindcss/enforces-negative-arbitrary-values": "warn",
       "tailwindcss/enforces-shorthand": "warn",

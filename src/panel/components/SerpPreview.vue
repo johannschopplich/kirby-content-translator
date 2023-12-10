@@ -15,7 +15,7 @@ export default {
   },
 
   computed: {
-    content() {
+    currentContent() {
       return this.$store.getters["content/values"]();
     },
     path() {
@@ -28,7 +28,7 @@ export default {
 
       let path = this.getNonLocalizedPath(this.url);
 
-      if (this.config.defaultLanguagePrefix) {
+      if (!this.config.defaultLanguagePrefix) {
         if (!this.$panel.language.default) {
           path = joinURL(this.$panel.language.code, path);
         }
@@ -73,33 +73,54 @@ export default {
 <template>
   <k-section :label="label">
     <div
-      class="overflow-hidden rounded-[var(--input-rounded)] bg-[var(--input-color-back)] p-4"
+      class="kcts-overflow-hidden kcts-rounded-[var(--input-rounded)] kcts-bg-[var(--input-color-back)] kcts-p-4"
     >
-      <div class="mb-2 flex items-center gap-3">
+      <div class="kcts-mb-2 kcts-flex kcts-items-center kcts-gap-3">
         <figure
-          class="inline-flex aspect-square h-[26px] w-[26px] items-center justify-center rounded-full border border-solid border-[#ecedef] bg-[#f1f3f4]"
+          class="kcts-inline-flex kcts-aspect-square kcts-h-[26px] kcts-w-[26px] kcts-items-center kcts-justify-center kcts-rounded-full kcts-border kcts-border-solid kcts-border-[#ecedef] kcts-bg-[#f1f3f4]"
         >
           <img
-            class="block h-[18px] w-[18px]"
+            class="kcts-block kcts-h-[18px] kcts-w-[18px]"
             :src="config.faviconUrl || '/assets/favicon.svg'"
             alt=""
           />
         </figure>
-        <div class="flex flex-col">
-          <span class="text-sm text-[#4d5156]">{{ config.title }}</span>
-          <span class="line-clamp-1 text-xs text-[#4d5156]">{{
-            joinURL(config.baseUrl || config.url, path)
+        <div class="kcts-flex kcts-flex-col">
+          <span class="kcts-text-sm kcts-text-[#4d5156]">{{
+            config.siteTitle
+          }}</span>
+          <span class="kcts-line-clamp-1 kcts-text-xs kcts-text-[#4d5156]">{{
+            joinURL(config.siteUrl, path)
           }}</span>
         </div>
       </div>
 
-      <h3 class="mb-1 line-clamp-1 text-xl text-[#1a0dab]">
-        {{ content.customTitle || `${$panel.view.title} – ${config.title}` }}
+      <h3 class="kcts-mb-1 kcts-line-clamp-1 kcts-text-xl kcts-text-[#1a0dab]">
+        {{
+          currentContent[config.titleContentKey] ||
+          `${$panel.view.title} ${(config.titleSeparator || "–").trim()} ${
+            config.siteTitle
+          }`
+        }}
       </h3>
 
-      <p class="line-clamp-2 text-sm text-[#4d5156]">
-        {{ content.description }}
+      <p class="kcts-line-clamp-2 kcts-text-sm kcts-text-[#4d5156]">
+        {{ currentContent[config.descriptionContentKey] }}
       </p>
     </div>
+
+    <k-button-group
+      v-show="config.searchConsoleUrl"
+      class="kcts-mt-2 kcts-w-full"
+    >
+      <k-button
+        :link="config.searchConsoleUrl"
+        icon="open"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Google Search Console
+      </k-button>
+    </k-button-group>
   </k-section>
 </template>
