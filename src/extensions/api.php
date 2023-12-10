@@ -28,7 +28,7 @@ return [
                     $authKey = $kirby->option('johannschopplich.content-translator.DeepL.apiKey');
                     $apiUrlFree = 'https://api-free.deepl.com/v2/translate';
                     $apiUrlPro = 'https://api.deepl.com/v2/translate';
-                    $isAuthKeyFreeAccount = substr($authKey, -3) === ':fx';
+                    $isAuthKeyFreeAccount = str_ends_with($authKey, ':fx');
 
                     if (empty($authKey)) {
                         return Response::json([
