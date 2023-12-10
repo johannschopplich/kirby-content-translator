@@ -211,7 +211,7 @@ export default {
 
     <k-box
       v-show="$panel.language.default"
-      class="mt-1"
+      class="kcts-mt-1"
       theme="none"
       :text="
         $t('johannschopplich.content-translator.help.disallowDefaultLanguage')
