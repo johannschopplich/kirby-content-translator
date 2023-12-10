@@ -2,7 +2,7 @@
   "name": "johannschopplich/kirby-content-translator",
   "description": "Kirby Panel plugin to translate content at once with DeepL or other services",
   "type": "kirby-plugin",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "keywords": [
     "content",
     "DeepL",
