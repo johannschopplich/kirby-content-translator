@@ -188,10 +188,10 @@ Instead of using the DeepL API, you can define a custom translator callback that
 ```php
 # /site/config/config.php
 return [
-    'johannschopplich.algolia-docsearch' => [
+    'johannschopplich.content-translator' => [
         'translateFn' => function (string $text, string|null $sourceLanguageCode, string $targetLanguageCode): string {
             // Your custom translation logic
-            return myCustomTranslateFunction($text, $sourceLanguageCode,   $targetLanguageCode);
+            return myCustomTranslateFunction($text, $sourceLanguageCode, $targetLanguageCode);
         }
     ]
 ];
