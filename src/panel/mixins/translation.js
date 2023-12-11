@@ -8,6 +8,36 @@ export default {
     ) {
       const tasks = [];
 
+      const handleBlocksField = (blocks) => {
+        for (const block of blocks) {
+          if (!isObject(block.content) || !block.id || block.isHidden === true)
+            continue;
+
+          if (!Object.keys(translatableBlocks).includes(block.type)) continue;
+
+          for (const blockFieldKey of Object.keys(block.content)) {
+            if (
+              !toArray(translatableBlocks[block.type]).includes(blockFieldKey)
+            )
+              continue;
+
+            if (!block.content[blockFieldKey]) continue;
+
+            tasks.push(async () => {
+              const response = await this.$api.post(
+                "__content-translator__/translate",
+                {
+                  sourceLanguage,
+                  targetLanguage,
+                  text: block.content[blockFieldKey],
+                },
+              );
+              block.content[blockFieldKey] = response.result.text;
+            });
+          }
+        }
+      };
+
       for (const key in obj) {
         if (!obj[key]) continue;
 
@@ -43,42 +73,22 @@ export default {
                 return response.result.text;
               }),
             );
-          } else {
-            // Detect and handle fields inside blocks
-            for (const block of obj[key]) {
-              if (
-                !isObject(block.content) ||
-                !block.id ||
-                block.isHidden === true
-              )
-                continue;
+            continue;
+          }
 
-              if (!Object.keys(translatableBlocks).includes(block.type))
-                continue;
-
-              for (const blockFieldKey of Object.keys(block.content)) {
-                if (
-                  !toArray(translatableBlocks[block.type]).includes(
-                    blockFieldKey,
-                  )
-                )
-                  continue;
-
-                if (!block.content[blockFieldKey]) continue;
-
-                tasks.push(async () => {
-                  const response = await this.$api.post(
-                    "__content-translator__/translate",
-                    {
-                      sourceLanguage,
-                      targetLanguage,
-                      text: block.content[blockFieldKey],
-                    },
-                  );
-                  block.content[blockFieldKey] = response.result.text;
-                });
+          // Detect and handle layout fields
+          if (obj[key].every((i) => isObject(i) && i.columns)) {
+            for (const layout of obj[key]) {
+              for (const column of layout.columns) {
+                handleBlocksField(column.blocks);
               }
             }
+            continue;
+          }
+
+          // Detect and handle block fields
+          if (obj[key].every((i) => isObject(i) && i.content)) {
+            handleBlocksField(obj[key]);
           }
         }
 
