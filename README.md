@@ -11,8 +11,9 @@ With a single click, an editor can:
 
 ## Key Features
 
-- 🌐 Translate **writer**, **blocks** and other fields with one click!
+- 🚌 Supports **writer**, **blocks**, **layouts** and other Kirby fields
 - 🧮 Configure which fields should be translated
+- 🌐 Translate all fields with one click
 - 🌝 Panel buttons
 - 🧩 Use DeepL API or custom translation service
 
