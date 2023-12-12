@@ -36,6 +36,8 @@ return [
                     ];
                 }
 
+                $config['translateFn'] = isset($config['translateFn']) && is_callable($config['translateFn']);
+
                 return $config;
             }
         ]
