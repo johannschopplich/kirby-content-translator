@@ -84,7 +84,7 @@ Finally, store the DeepL API key in your config file:
 # /site/config/config.php
 return [
     'johannschopplich.content-translator' => [
-        // API key for the DeepL API
+        // API key for the DeepL free or pro plan
         'DeepL' => [
             'apiKey' => 'abc123…'
         ]
