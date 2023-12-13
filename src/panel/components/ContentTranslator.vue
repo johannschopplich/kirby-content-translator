@@ -163,59 +163,61 @@ export default {
         configuration.
       </k-text>
     </k-box>
-    <k-box v-else theme="none">
-      <k-button-group layout="collapsed">
-        <k-button
-          v-show="syncableFields.length"
-          :disabled="$panel.language.default"
-          size="sm"
-          variant="filled"
-          @click="
-            openModal(
-              $t('johannschopplich.content-translator.dialog.sync', {
-                language: defaultLanguage.name,
-              }),
-              () => syncModelContent(),
-            )
-          "
-        >
-          {{ $t("johannschopplich.content-translator.sync") }}
-        </k-button>
-        <k-button
-          v-for="language in $panel.languages.filter(
-            (language) => !language.default,
-          )"
-          :key="language.code"
-          :disabled="$panel.language.default"
-          icon="translate"
-          size="sm"
-          variant="filled"
-          theme="notice"
-          @click="
-            openModal(
-              $t('johannschopplich.content-translator.dialog.translate', {
-                language: language.name,
-              }),
-              () => translateModelContent(language),
-            )
-          "
-        >
-          {{
-            $t("johannschopplich.content-translator.translate", {
-              language: language.code.toUpperCase(),
-            })
-          }}
-        </k-button>
-      </k-button-group>
-    </k-box>
+    <template v-else>
+      <k-box theme="none">
+        <k-button-group layout="collapsed">
+          <k-button
+            v-show="syncableFields.length"
+            :disabled="$panel.language.default"
+            size="sm"
+            variant="filled"
+            @click="
+              openModal(
+                $t('johannschopplich.content-translator.dialog.sync', {
+                  language: defaultLanguage.name,
+                }),
+                () => syncModelContent(),
+              )
+            "
+          >
+            {{ $t("johannschopplich.content-translator.sync") }}
+          </k-button>
+          <k-button
+            v-for="language in $panel.languages.filter(
+              (language) => !language.default,
+            )"
+            :key="language.code"
+            :disabled="$panel.language.default"
+            icon="translate"
+            size="sm"
+            variant="filled"
+            theme="notice"
+            @click="
+              openModal(
+                $t('johannschopplich.content-translator.dialog.translate', {
+                  language: language.name,
+                }),
+                () => translateModelContent(language),
+              )
+            "
+          >
+            {{
+              $t("johannschopplich.content-translator.translate", {
+                language: language.code.toUpperCase(),
+              })
+            }}
+          </k-button>
+        </k-button-group>
+      </k-box>
 
-    <k-box
-      v-show="$panel.language.default"
-      class="kct-mt-1"
-      theme="none"
-      :text="
-        $t('johannschopplich.content-translator.help.disallowDefaultLanguage')
-      "
-    />
+      <k-box
+        v-show="$panel.language.default"
+        class="kct-mt-1"
+        theme="none"
+        :text="
+          $t('johannschopplich.content-translator.help.disallowDefaultLanguage')
+        "
+      />
+    </template>
   </k-section>
 </template>
