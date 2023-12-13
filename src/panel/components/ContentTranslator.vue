@@ -156,7 +156,7 @@ export default {
         configuration.
       </k-text>
     </k-box>
-    <k-box v-if="!translatableFields.length" theme="info">
+    <k-box v-else-if="!translatableFields.length" theme="info">
       <k-text>
         You have to define at least one translatable field for the
         <code>translatableFields</code> blueprint or in your Kirby
