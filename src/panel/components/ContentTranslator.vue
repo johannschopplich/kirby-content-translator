@@ -69,11 +69,8 @@ export default {
 
   methods: {
     t(value) {
-      if (Array.isArray(value)) {
-        return value[this.$panel.translation.code] ?? Object.values(value)[0];
-      }
-
-      return value;
+      if (!value || typeof value === "string") return value;
+      return value[this.$panel.translation.code] ?? Object.values(value)[0];
     },
     syncModelContent() {
       for (const [key, value] of Object.entries(this.syncableContent)) {
