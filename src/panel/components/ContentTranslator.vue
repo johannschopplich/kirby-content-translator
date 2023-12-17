@@ -72,8 +72,14 @@ export default {
       if (!value || typeof value === "string") return value;
       return value[this.$panel.translation.code] ?? Object.values(value)[0];
     },
-    syncModelContent() {
-      for (const [key, value] of Object.entries(this.syncableContent)) {
+    async syncModelContent(language) {
+      // If a language is passed, use the content of that language as the source,
+      // otherwise use the default language
+      const _syncableContent = language
+        ? await this.getSyncableContentForLanguage(language)
+        : this.syncableContent;
+
+      for (const [key, value] of Object.entries(_syncableContent)) {
         this.$store.dispatch("content/update", [key, value]);
       }
 
@@ -81,14 +87,14 @@ export default {
         this.$t("johannschopplich.content-translator.notification.synced"),
       );
     },
-    async translateModelContent(language) {
+    async translateModelContent(targetLanguage, sourceLanguage) {
       this.$panel.view.isLoading = true;
 
       const clone = JSON.parse(JSON.stringify(this.translatableContent));
       try {
         await this.recursiveTranslateContent(clone, {
-          sourceLanguage: this.defaultLanguage.code,
-          targetLanguage: language.code,
+          sourceLanguage: sourceLanguage?.code,
+          targetLanguage: targetLanguage.code,
           translatableBlocks: this.translatableBlocks,
         });
       } catch (error) {
@@ -114,6 +120,17 @@ export default {
 
       this.defaultContent = content;
     },
+    async getSyncableContentForLanguage(language) {
+      const { content } = await this.$api.get(this.$panel.view.path, {
+        language: language.code,
+      });
+
+      return Object.fromEntries(
+        Object.entries(content).filter(([key]) =>
+          this.syncableFields.includes(key),
+        ),
+      );
+    },
     openModal(text, callback) {
       if (!this.confirm) {
         callback?.();
@@ -136,14 +153,14 @@ export default {
 </script>
 
 <template>
-  <k-section v-show="config" :label="label">
+  <k-section v-if="config" :label="label">
     <k-box v-if="!$panel.multilang" theme="info">
       <k-text>
         This section requires multi-language support to be enabled.
       </k-text>
     </k-box>
     <k-box
-      v-else-if="!config?.translateFn && !config?.DeepL?.apiKey"
+      v-else-if="!config.translateFn && !config.DeepL?.apiKey"
       theme="none"
     >
       <k-text>
@@ -159,6 +176,53 @@ export default {
         <code>translatableFields</code> blueprint or in your Kirby
         configuration.
       </k-text>
+    </k-box>
+    <k-box v-else-if="config.allowDefaultLanguageOverwrite" theme="none">
+      <k-button-group layout="collapsed">
+        <k-button
+          v-for="language in $panel.languages.filter(
+            (language) => language.code !== $panel.language.code,
+          )"
+          v-show="syncableFields.length"
+          :key="language.code"
+          size="sm"
+          variant="filled"
+          @click="
+            openModal(
+              $t('johannschopplich.content-translator.dialog.sync', {
+                language: language.name,
+              }),
+              () => syncModelContent(language),
+            )
+          "
+        >
+          {{
+            $t("johannschopplich.content-translator.syncFrom", {
+              language: language.code.toUpperCase(),
+            })
+          }}
+        </k-button>
+        <k-button
+          icon="translate"
+          size="sm"
+          variant="filled"
+          theme="notice"
+          @click="
+            openModal(
+              $t('johannschopplich.content-translator.dialog.translate', {
+                language: $panel.language.name,
+              }),
+              () => translateModelContent($panel.language),
+            )
+          "
+        >
+          {{
+            $t("johannschopplich.content-translator.translate", {
+              language: $panel.language.code.toUpperCase(),
+            })
+          }}
+        </k-button>
+      </k-button-group>
     </k-box>
     <template v-else>
       <k-box theme="none">
@@ -180,10 +244,6 @@ export default {
             {{ $t("johannschopplich.content-translator.sync") }}
           </k-button>
           <k-button
-            v-for="language in $panel.languages.filter(
-              (language) => !language.default,
-            )"
-            :key="language.code"
             :disabled="$panel.language.default"
             icon="translate"
             size="sm"
@@ -192,15 +252,15 @@ export default {
             @click="
               openModal(
                 $t('johannschopplich.content-translator.dialog.translate', {
-                  language: language.name,
+                  language: $panel.language.name,
                 }),
-                () => translateModelContent(language),
+                () => translateModelContent($panel.language, defaultLanguage),
               )
             "
           >
             {{
               $t("johannschopplich.content-translator.translate", {
-                language: language.code.toUpperCase(),
+                language: $panel.language.code.toUpperCase(),
               })
             }}
           </k-button>

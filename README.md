@@ -182,6 +182,19 @@ return [
 ]
 ```
 
+### Allow Overwriting Content of the Default Language
+
+With the default plugin configuration, the synchronisation process will only copy content from the default language to secondary languages. If you want to allow overwriting content of the default language, you can set the `allowOverwrite` key to `true`. This will enable you to synchronise content from the secondary language to the default language.
+
+```php
+# /site/config/config.php
+return [
+    'johannschopplich.content-translator' => [
+        'allowDefaultLanguageOverwrite' => true
+    ]
+]
+```
+
 ### Custom Translator Function
 
 Instead of using the DeepL API, you can define a custom translator callback that accepts the text to be translated, the source language code and the target language code. The plugin expects a string to be returned.
