@@ -189,7 +189,7 @@ export default {
           variant="filled"
           @click="
             openModal(
-              $t('johannschopplich.content-translator.dialog.sync', {
+              $t('johannschopplich.content-translator.dialog.syncFrom', {
                 language: language.name,
               }),
               () => syncModelContent(language),
