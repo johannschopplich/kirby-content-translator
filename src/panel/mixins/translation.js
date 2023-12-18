@@ -24,7 +24,7 @@ export default {
             if (!block.content[blockFieldKey]) continue;
 
             tasks.push(async () => {
-              const response = await this.$api.post(
+              const response = await window.panel.api.post(
                 "__content-translator__/translate",
                 {
                   sourceLanguage,
@@ -44,7 +44,7 @@ export default {
         // Handle strings as field value
         if (typeof obj[key] === "string") {
           tasks.push(async () => {
-            const response = await this.$api.post(
+            const response = await window.panel.api.post(
               "__content-translator__/translate",
               {
                 sourceLanguage,
@@ -62,7 +62,7 @@ export default {
           if (obj[key].every((i) => typeof i === "string")) {
             obj[key] = await Promise.all(
               obj[key].filter(Boolean).map(async (item) => {
-                const response = await this.$api.post(
+                const response = await window.panel.api.post(
                   "__content-translator__/translate",
                   {
                     sourceLanguage,

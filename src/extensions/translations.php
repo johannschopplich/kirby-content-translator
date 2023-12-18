@@ -4,7 +4,7 @@ return [
     'en' => [
         'johannschopplich.content-translator.label' => 'Content Translator',
         'johannschopplich.content-translator.sync' => 'Synchronize',
-        'johannschopplich.content-translator.syncFrom' => 'Synchronize from {language}',
+        'johannschopplich.content-translator.importFrom' => 'Import from {language}',
         'johannschopplich.content-translator.translate' => 'Translate to {language}',
         'johannschopplich.content-translator.help.disallowDefaultLanguage' => 'Content can only be synchronised and translated for secondary languages.',
         'johannschopplich.content-translator.dialog.sync' => 'The fields of the current language will be overwritten with the contents of the default language ({language}). Continue?',
@@ -16,7 +16,7 @@ return [
     'de' => [
         'johannschopplich.content-translator.label' => 'Content-Übersetzer',
         'johannschopplich.content-translator.sync' => 'Synchronisieren',
-        'johannschopplich.content-translator.syncFrom' => 'Synchronisieren von {language}',
+        'johannschopplich.content-translator.importFrom' => 'Importieren von {language}',
         'johannschopplich.content-translator.translate' => 'Zu {language} übersetzen',
         'johannschopplich.content-translator.help.disallowDefaultLanguage' => 'Content kann nur für sekundären Sprachen synchronisiert und übersetzt werden.',
         'johannschopplich.content-translator.dialog.sync' => 'Die Felder der aktuellen Sprache werden mit den Inhalten der Standardsprache ({language}) überschrieben. Fortfahren?',
@@ -28,7 +28,7 @@ return [
     'fr' => [
         'johannschopplich.content-translator.label' => 'Traducteur de contenu',
         'johannschopplich.content-translator.sync' => 'Synchroniser',
-        'johannschopplich.content-translator.syncFrom' => 'Synchroniser depuis {language}',
+        'johannschopplich.content-translator.importFrom' => 'Importer de {language}',
         'johannschopplich.content-translator.translate' => 'Traduire en {language}',
         'johannschopplich.content-translator.help.disallowDefaultLanguage' => 'Le contenu ne peut être synchronisé et traduit que pour les langues secondaires.',
         'johannschopplich.content-translator.dialog.sync' => 'Les champs de la langue actuelle seront remplacés par le contenu de la langue par défaut ({language}). Poursuivre ?',

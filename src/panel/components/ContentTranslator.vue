@@ -197,7 +197,7 @@ export default {
           "
         >
           {{
-            $t("johannschopplich.content-translator.syncFrom", {
+            $t("johannschopplich.content-translator.importFrom", {
               language: language.code.toUpperCase(),
             })
           }}
