@@ -18,7 +18,7 @@ return [
         'johannschopplich.content-translator.sync' => 'Synchronisieren',
         'johannschopplich.content-translator.importFrom' => 'Importieren von {language}',
         'johannschopplich.content-translator.translate' => 'Zu {language} übersetzen',
-        'johannschopplich.content-translator.help.disallowDefaultLanguage' => 'Content kann nur für sekundären Sprachen synchronisiert und übersetzt werden.',
+        'johannschopplich.content-translator.help.disallowDefaultLanguage' => 'Content kann nur für sekundäre Sprachen synchronisiert und übersetzt werden.',
         'johannschopplich.content-translator.dialog.sync' => 'Die Felder der aktuellen Sprache werden mit den Inhalten der Standardsprache ({language}) überschrieben. Fortfahren?',
         'johannschopplich.content-translator.dialog.syncFrom' => 'Die Felder der aktuellen Sprache werden mit den Inhalten von <strong>{language}</strong> überschrieben. Fortfahren?',
         'johannschopplich.content-translator.dialog.translate' => 'Die Inhalte der aktuellen Sprache werden zu <strong>{language}</strong> übersetzt. Fortfahren?',
