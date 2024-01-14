@@ -8,6 +8,7 @@ scripts/ export-ignore
 src/panel/ export-ignore
 
 # Development files
+.vscode export-ignore
 .editorconfig export-ignore
 composer.lock export-ignore
 index.dev.mjs export-ignore
