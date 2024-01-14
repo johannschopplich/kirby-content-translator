@@ -161,7 +161,7 @@ export default {
     </k-box>
     <k-box
       v-else-if="!config.translateFn && !config.DeepL?.apiKey"
-      theme="none"
+      theme="empty"
     >
       <k-text>
         You need to set the either a custom <code>translateFn</code> or the
