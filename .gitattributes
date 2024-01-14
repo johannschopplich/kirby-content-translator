@@ -6,6 +6,8 @@
 # Source files
 scripts/ export-ignore
 src/panel/ export-ignore
+postcss.config export-ignore
+tailwind.config.cjs export-ignore
 
 # Development files
 .vscode export-ignore
