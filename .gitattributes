@@ -9,8 +9,9 @@ src/panel/ export-ignore
 
 # Development files
 .editorconfig export-ignore
-.eslintrc.js export-ignore
 composer.lock export-ignore
+index.dev.mjs export-ignore
+eslint.config.js export-ignore
 package.json export-ignore
 pnpm-lock.yaml export-ignore
 
