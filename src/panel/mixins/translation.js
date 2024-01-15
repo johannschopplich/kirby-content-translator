@@ -23,6 +23,17 @@ export default {
 
             if (!block.content[blockFieldKey]) continue;
 
+            // Handle nested blocks
+            if (
+              Array.isArray(block.content[blockFieldKey]) &&
+              block.content[blockFieldKey].every(
+                (i) => isObject(i) && i.content,
+              )
+            ) {
+              handleBlocksField(block.content[blockFieldKey]);
+              continue;
+            }
+
             tasks.push(async () => {
               const response = await window.panel.api.post(
                 "__content-translator__/translate",
@@ -91,14 +102,6 @@ export default {
             handleBlocksField(obj[key]);
           }
         }
-
-        // Recursively process nested objects
-        // else if (typeof obj[key] === "object" && obj[key] !== null) {
-        //   obj[key] = await this.recursiveTranslateContent(obj[key], {
-        //     targetLanguage,
-        //     translatableBlocks,
-        //   });
-        // }
       }
 
       // Process translation tasks in batches
