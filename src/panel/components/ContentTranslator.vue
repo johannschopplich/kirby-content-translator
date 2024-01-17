@@ -5,6 +5,7 @@ import TranslationMixin from "../mixins/translation.js";
 
 export default {
   mixins: [SectionMixin, LocaleMixin, TranslationMixin],
+  inheritAttrs: false,
 
   data() {
     return {
