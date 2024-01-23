@@ -16,6 +16,36 @@ export default {
           if (!Object.keys(translatableBlocks).includes(block.type)) continue;
 
           for (const blockFieldKey of Object.keys(block.content)) {
+
+            // Handle structures
+            if (
+              isObject(translatableBlocks[block.type]) &&
+              !Array.isArray(translatableBlocks[block.type])
+            ) {
+              for (const [structureKey, fieldKeys] of Object.entries(
+                translatableBlocks[block.type]
+              )) {
+                if (!Array.isArray(fieldKeys)) continue;
+
+                fieldKeys.forEach((fieldKey) => {
+                  for (let i = 0; i < block.content[structureKey].length; i++) {
+                    const text = block.content[structureKey][i][fieldKey];
+                    if (!text) continue;
+
+                    tasks.push(async () => {
+                      const response = await window.panel.api.post(
+                        "__content-translator__/translate",
+                        { sourceLanguage, targetLanguage, text }
+                      );
+                      block.content[structureKey][i][fieldKey] =
+                        response.result.text;
+                    });
+                  }
+                });
+              }
+              continue;
+            }
+            
             if (
               !toArray(translatableBlocks[block.type]).includes(blockFieldKey)
             )
