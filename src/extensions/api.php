@@ -8,7 +8,7 @@ return [
         [
             'pattern' => '__content-translator__/translate',
             'method' => 'POST',
-            'action' => function () use (&$kirby) {
+            'action' => function () use ($kirby) {
                 $request = $kirby->request();
                 $text = $request->get('text');
                 $sourceLanguage = $request->get('sourceLanguage');
