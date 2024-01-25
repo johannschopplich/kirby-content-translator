@@ -22,6 +22,7 @@ export default {
       defaultLanguage: this.$panel.languages.find(
         (language) => language.default,
       ),
+      defaultTitle: undefined,
       defaultContent: {},
     };
   },
@@ -96,6 +97,9 @@ export default {
     async translateModelContent(targetLanguage, sourceLanguage) {
       this.$panel.view.isLoading = true;
 
+      // TODO: Translate title
+      // this.$api.patch(this.$panel.view.path, { title });
+
       const clone = JSON.parse(JSON.stringify(this.translatableContent));
       try {
         await this.recursiveTranslateContent(clone, {
@@ -121,10 +125,11 @@ export default {
       );
     },
     async updateModelDefaultContent() {
-      const { content } = await this.$api.get(this.$panel.view.path, {
+      const { title, content } = await this.$api.get(this.$panel.view.path, {
         language: this.defaultLanguage.code,
       });
 
+      this.defaultTitle = title;
       this.defaultContent = content;
     },
     async getSyncableContentForLanguage(language) {
