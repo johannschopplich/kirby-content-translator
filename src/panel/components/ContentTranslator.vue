@@ -1,7 +1,7 @@
 <script>
-import SectionMixin from "../mixins/section.js";
-import LocaleMixin from "../mixins/locale.js";
-import TranslationMixin from "../mixins/translation.js";
+import SectionMixin from "../mixins/section";
+import LocaleMixin from "../mixins/locale";
+import TranslationMixin from "../mixins/translation";
 
 export default {
   mixins: [SectionMixin, LocaleMixin, TranslationMixin],
@@ -14,6 +14,7 @@ export default {
       confirm: true,
       syncableFields: [],
       translatableFields: [],
+      translatableStructureFields: [],
       translatableBlocks: [],
       // Section computed
       config: undefined,
@@ -53,6 +54,10 @@ export default {
     this.confirm = response.confirm ?? response.config.confirm ?? true;
     this.translatableFields =
       response.translatableFields ?? response.config.translatableFields ?? [];
+    this.translatableStructureFields =
+      response.translatableStructureFields ??
+      response.config.translatableStructureFields ??
+      [];
     this.syncableFields =
       response.syncableFields ?? response.config.syncableFields ?? [];
     this.translatableBlocks =
@@ -96,6 +101,7 @@ export default {
         await this.recursiveTranslateContent(clone, {
           sourceLanguage: sourceLanguage?.code,
           targetLanguage: targetLanguage.code,
+          translatableStructureFields: this.translatableStructureFields,
           translatableBlocks: this.translatableBlocks,
         });
       } catch (error) {

@@ -4,11 +4,68 @@ export default {
   methods: {
     async recursiveTranslateContent(
       obj,
-      { sourceLanguage, targetLanguage, translatableBlocks = {} },
+      {
+        sourceLanguage,
+        targetLanguage,
+        translatableStructureFields = [],
+        translatableBlocks = {},
+      },
     ) {
       const tasks = [];
 
-      const handleBlocksField = (blocks) => {
+      const handleStructureField = (
+        /** @type {Record<string, any[]>} */
+        structure,
+      ) => {
+        for (const structureItem of structure) {
+          for (const key in structureItem) {
+            if (!translatableStructureFields.includes(key)) continue;
+            if (!structureItem[key]) continue;
+
+            // Handle strings as field value
+            if (typeof structureItem[key] === "string") {
+              tasks.push(async () => {
+                const response = await window.panel.api.post(
+                  "__content-translator__/translate",
+                  {
+                    sourceLanguage,
+                    targetLanguage,
+                    text: structureItem[key],
+                  },
+                );
+                structureItem[key] = response.result.text;
+              });
+            }
+
+            // Handle array as field value
+            else if (Array.isArray(structureItem[key])) {
+              // Handle array of strings
+              if (structureItem[key].every((i) => typeof i === "string")) {
+                tasks.push(async () => {
+                  for (const index in structureItem[key]) {
+                    if (!structureItem[key][index]) continue;
+
+                    const response = await window.panel.api.post(
+                      "__content-translator__/translate",
+                      {
+                        sourceLanguage,
+                        targetLanguage,
+                        text: structureItem[key][index],
+                      },
+                    );
+                    structureItem[key][index] = response.result.text;
+                  }
+                });
+              }
+            }
+          }
+        }
+      };
+
+      const handleBlocksField = (
+        /** @type {Record<string, any[]>} */
+        blocks,
+      ) => {
         for (const block of blocks) {
           if (!isObject(block.content) || !block.id || block.isHidden === true)
             continue;
@@ -31,6 +88,21 @@ export default {
               )
             ) {
               handleBlocksField(block.content[blockFieldKey]);
+              continue;
+            }
+
+            // Handle structures in blocks
+            if (
+              Array.isArray(block.content[blockFieldKey]) &&
+              block.content[blockFieldKey].every(
+                (i) =>
+                  isObject(i) &&
+                  Object.keys(i).some((j) =>
+                    translatableStructureFields.includes(j),
+                  ),
+              )
+            ) {
+              handleStructureField(block.content[blockFieldKey]);
               continue;
             }
 
@@ -68,7 +140,7 @@ export default {
         }
 
         // Handle array as field value
-        else if (Array.isArray(obj[key])) {
+        else if (Array.isArray(obj[key]) && obj[key].length > 0) {
           // Handle array of strings
           if (obj[key].every((i) => typeof i === "string")) {
             obj[key] = await Promise.all(
@@ -100,6 +172,20 @@ export default {
           // Detect and handle block fields
           if (obj[key].every((i) => isObject(i) && i.content)) {
             handleBlocksField(obj[key]);
+          }
+
+          // Detect and handle structure fields
+          if (
+            obj[key].every(
+              (i) =>
+                isObject(i) &&
+                Object.keys(i).some((j) =>
+                  translatableStructureFields.includes(j),
+                ),
+            )
+          ) {
+            handleStructureField(obj[key]);
+            continue;
           }
         }
       }
