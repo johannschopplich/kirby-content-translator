@@ -9,10 +9,10 @@ return [
             'pattern' => '__content-translator__/translate',
             'method' => 'POST',
             'action' => function () use (&$kirby) {
-                $body = $kirby->request()->body();
-                $text = $body->get('text');
-                $sourceLanguage = $body->get('sourceLanguage');
-                $targetLanguage = $body->get('targetLanguage');
+                $request = $kirby->request();
+                $text = $request->get('text');
+                $sourceLanguage = $request->get('sourceLanguage');
+                $targetLanguage = $request->get('targetLanguage');
 
                 if (!$text || !$targetLanguage) {
                     return Response::json([

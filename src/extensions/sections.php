@@ -32,7 +32,9 @@ return [
                 if (is_array($translatableBlocks)) {
                     $translatableBlocks = array_change_key_case($translatableBlocks, CASE_LOWER);
                     foreach ($translatableBlocks as $block => $fields) {
-                        if (!is_array($fields)) $fields = [$fields];
+                        if (!is_array($fields)) {
+                            $fields = [$fields];
+                        }
                         $translatableBlocks[$block] = array_map('strtolower', $fields);
                     }
                 }
