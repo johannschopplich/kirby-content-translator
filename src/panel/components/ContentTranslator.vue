@@ -40,20 +40,12 @@ const translateTitle = ref(false);
 const config = ref();
 
 // Generic data
-const defaultTitle = ref();
-const defaultContent = ref({});
+const defaultLanguageData = ref({});
 
 // Static data
 const defaultLanguage = panel.languages.find((language) => language.default);
 
 const currentContent = computed(() => store.getters["content/values"]());
-const syncableContent = computed(() =>
-  Object.fromEntries(
-    Object.entries(defaultContent.value).filter(([key]) =>
-      syncableFields.value.includes(key),
-    ),
-  ),
-);
 const translatableContent = computed(() =>
   Object.fromEntries(
     Object.entries(currentContent.value).filter(([key]) =>
@@ -85,12 +77,12 @@ const translatableContent = computed(() =>
   config.value = response.config ?? {};
 
   // Re-fetch default content whenever the page gets saved
-  panel.events.on("model.update", updateModelDefaultContent);
-  updateModelDefaultContent();
+  panel.events.on("model.update", updateModelDefaultLanguageData);
+  updateModelDefaultLanguageData();
 })();
 
 onBeforeUnmount(() => {
-  panel.events.off("model.update", updateModelDefaultContent);
+  panel.events.off("model.update", updateModelDefaultLanguageData);
 });
 
 function t(value) {
@@ -99,27 +91,28 @@ function t(value) {
 }
 
 async function syncModelContent(language) {
-  let _title = defaultTitle.value;
-  let _syncableContent = syncableContent.value;
+  let { title, content } = defaultLanguageData.value;
 
   // If a language is passed, use the content of that language as the source,
   // otherwise use the default language
   if (language) {
-    const { title, content } = await getCurrentViewData(language);
-    _title = title;
-    _syncableContent = Object.fromEntries(
-      Object.entries(content).filter(([key]) =>
-        syncableFields.value.includes(key),
-      ),
-    );
+    const data = await getModelData(language);
+    title = data.title;
+    content = data.content;
   }
 
-  for (const [key, value] of Object.entries(_syncableContent)) {
+  const syncableContent = Object.fromEntries(
+    Object.entries(content).filter(([key]) =>
+      syncableFields.value.includes(key),
+    ),
+  );
+
+  for (const [key, value] of Object.entries(syncableContent)) {
     store.dispatch("content/update", [key, value]);
   }
 
   if (translateTitle.value) {
-    await panel.api.patch(panel.view.path, { title: _title });
+    await panel.api.patch(`${panel.view.path}/title`, { title });
     panel.view.refresh();
   }
 
@@ -151,12 +144,14 @@ async function translateModelContent(targetLanguage, sourceLanguage) {
   }
 
   if (translateTitle.value) {
-    const response = await panel.api.post(TRANSLATION_API_ROUTE, {
+    const { result } = await panel.api.post(TRANSLATION_API_ROUTE, {
       sourceLanguage: sourceLanguage?.code,
       targetLanguage: targetLanguage.code,
       text: panel.view.title,
     });
-    await panel.api.patch(panel.view.path, { title: response.result.text });
+    await panel.api.patch(`${panel.view.path}/title`, {
+      title: result.text,
+    });
     panel.view.refresh();
   }
 
@@ -166,13 +161,11 @@ async function translateModelContent(targetLanguage, sourceLanguage) {
   );
 }
 
-async function updateModelDefaultContent() {
-  const { title, content } = await getCurrentViewData(defaultLanguage);
-  defaultTitle.value = title;
-  defaultContent.value = content;
+async function updateModelDefaultLanguageData() {
+  defaultLanguageData.value = await getModelData(defaultLanguage);
 }
 
-function getCurrentViewData(language) {
+function getModelData(language) {
   return panel.api.get(panel.view.path, {
     language: language.code,
   });
