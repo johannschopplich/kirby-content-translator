@@ -1,172 +1,190 @@
 <script>
-import SectionMixin from "../mixins/section";
-import LocaleMixin from "../mixins/locale";
-import TranslationMixin from "../mixins/translation";
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  ref,
+  usePanel,
+  useSection,
+  useStore,
+} from "kirbyuse";
+import { section } from "kirbyuse/props";
+import { useTranslation } from "../composables/translation";
 
-export default {
-  mixins: [SectionMixin, LocaleMixin, TranslationMixin],
+export default defineComponent({
   inheritAttrs: false,
-
-  data() {
-    return {
-      // Section props
-      label: undefined,
-      confirm: true,
-      syncableFields: [],
-      translatableFields: [],
-      translatableStructureFields: [],
-      translatableBlocks: [],
-      // Section computed
-      config: undefined,
-      // Generic data
-      defaultLanguage: this.$panel.languages.find(
-        (language) => language.default,
-      ),
-      defaultTitle: undefined,
-      defaultContent: {},
-    };
+  props: {
+    ...section,
   },
+});
+</script>
 
-  computed: {
-    currentContent() {
-      return this.$store.getters["content/values"]();
-    },
-    syncableContent() {
-      return Object.fromEntries(
-        Object.entries(this.defaultContent).filter(([key]) =>
-          this.syncableFields.includes(key),
-        ),
-      );
-    },
-    translatableContent() {
-      return Object.fromEntries(
-        Object.entries(this.currentContent).filter(([key]) =>
-          this.translatableFields.includes(key),
-        ),
-      );
-    },
-  },
+<script setup>
+const props = defineProps({});
 
-  async created() {
-    const response = await this.load();
-    this.label =
-      this.t(response.label) ||
-      this.$t("johannschopplich.content-translator.label");
-    this.confirm = response.confirm ?? response.config.confirm ?? true;
-    this.translatableFields =
-      response.translatableFields ?? response.config.translatableFields ?? [];
-    this.translatableStructureFields =
-      response.translatableStructureFields ??
-      response.config.translatableStructureFields ??
-      [];
-    this.syncableFields =
-      response.syncableFields ?? response.config.syncableFields ?? [];
-    this.translatableBlocks =
-      response.translatableBlocks ?? response.config.translatableBlocks ?? [];
-    this.config = response.config ?? {};
+const panel = usePanel();
+const store = useStore();
+const { recursiveTranslateContent } = useTranslation();
 
-    // Re-fetch default content whenever the page gets saved
-    this.$panel.events.on("model.update", this.updateModelDefaultContent);
-    this.updateModelDefaultContent();
-  },
+// Section props
+const label = ref();
+const confirm = ref(true);
+const syncableFields = ref([]);
+const translatableFields = ref([]);
+const translatableStructureFields = ref([]);
+const translatableBlocks = ref([]);
 
-  beforeDestroy() {
-    this.$panel.events.off("model.update", this.updateModelDefaultContent);
-  },
+// Section computed
+const config = ref();
 
-  methods: {
-    t(value) {
-      if (!value || typeof value === "string") return value;
-      return value[this.$panel.translation.code] ?? Object.values(value)[0];
-    },
-    async syncModelContent(language) {
-      // If a language is passed, use the content of that language as the source,
-      // otherwise use the default language
-      const _syncableContent = language
-        ? await this.getSyncableContentForLanguage(language)
-        : this.syncableContent;
+// Generic data
+const defaultTitle = ref();
+const defaultContent = ref({});
 
-      for (const [key, value] of Object.entries(_syncableContent)) {
-        this.$store.dispatch("content/update", [key, value]);
-      }
+// Static data
+const defaultLanguage = panel.languages.find((language) => language.default);
 
-      this.$panel.notification.success(
-        this.$t("johannschopplich.content-translator.notification.synced"),
-      );
-    },
-    async translateModelContent(targetLanguage, sourceLanguage) {
-      this.$panel.view.isLoading = true;
+const currentContent = computed(() => store.getters["content/values"]());
+const syncableContent = computed(() =>
+  Object.fromEntries(
+    Object.entries(defaultContent.value).filter(([key]) =>
+      syncableFields.value.includes(key),
+    ),
+  ),
+);
+const translatableContent = computed(() =>
+  Object.fromEntries(
+    Object.entries(currentContent.value).filter(([key]) =>
+      translatableFields.value.includes(key),
+    ),
+  ),
+);
 
-      // TODO: Translate title
-      // this.$api.patch(this.$panel.view.path, { title });
+(async () => {
+  const { load } = useSection();
+  const response = await load({
+    parent: props.parent,
+    name: props.name,
+  });
+  label.value =
+    t(response.label) || panel.t("johannschopplich.content-translator.label");
+  confirm.value = response.confirm ?? response.config.confirm ?? true;
+  translatableFields.value =
+    response.translatableFields ?? response.config.translatableFields ?? [];
+  translatableStructureFields.value =
+    response.translatableStructureFields ??
+    response.config.translatableStructureFields ??
+    [];
+  syncableFields.value =
+    response.syncableFields ?? response.config.syncableFields ?? [];
+  translatableBlocks.value =
+    response.translatableBlocks ?? response.config.translatableBlocks ?? [];
+  config.value = response.config ?? {};
 
-      const clone = JSON.parse(JSON.stringify(this.translatableContent));
-      try {
-        await this.recursiveTranslateContent(clone, {
-          sourceLanguage: sourceLanguage?.code,
-          targetLanguage: targetLanguage.code,
-          translatableStructureFields: this.translatableStructureFields,
-          translatableBlocks: this.translatableBlocks,
-        });
-      } catch (error) {
-        console.error(error);
-        this.$panel.notification.error(this.$t("error"));
-        return;
-      }
+  // Re-fetch default content whenever the page gets saved
+  panel.events.on("model.update", updateModelDefaultContent);
+  updateModelDefaultContent();
+})();
 
-      // Update content
-      for (const [key, value] of Object.entries(clone)) {
-        this.$store.dispatch("content/update", [key, value]);
-      }
+onBeforeUnmount(() => {
+  panel.events.off("model.update", updateModelDefaultContent);
+});
 
-      this.$panel.view.isLoading = false;
-      this.$panel.notification.success(
-        this.$t("johannschopplich.content-translator.notification.translated"),
-      );
-    },
-    async updateModelDefaultContent() {
-      const { title, content } = await this.$api.get(this.$panel.view.path, {
-        language: this.defaultLanguage.code,
-      });
+function t(value) {
+  if (!value || typeof value === "string") return value;
+  return value[panel.translation.code] ?? Object.values(value)[0];
+}
 
-      this.defaultTitle = title;
-      this.defaultContent = content;
-    },
-    async getSyncableContentForLanguage(language) {
-      const { content } = await this.$api.get(this.$panel.view.path, {
-        language: language.code,
-      });
+async function syncModelContent(language) {
+  // If a language is passed, use the content of that language as the source,
+  // otherwise use the default language
+  const _syncableContent = language
+    ? await getSyncableContentForLanguage(language)
+    : syncableContent.value;
 
-      return Object.fromEntries(
-        Object.entries(content).filter(([key]) =>
-          this.syncableFields.includes(key),
-        ),
-      );
-    },
-    openModal(text, callback) {
-      if (!this.confirm) {
+  for (const [key, value] of Object.entries(_syncableContent)) {
+    store.dispatch("content/update", [key, value]);
+  }
+
+  panel.notification.success(
+    panel.t("johannschopplich.content-translator.notification.synced"),
+  );
+}
+
+async function translateModelContent(targetLanguage, sourceLanguage) {
+  panel.view.isLoading = true;
+
+  // TODO: Translate title
+  // panel.api.patch(panel.view.path, { title });
+
+  const clone = JSON.parse(JSON.stringify(translatableContent.value));
+  try {
+    await recursiveTranslateContent(clone, {
+      sourceLanguage: sourceLanguage?.code,
+      targetLanguage: targetLanguage.code,
+      translatableStructureFields: translatableStructureFields.value,
+      translatableBlocks: translatableBlocks.value,
+    });
+  } catch (error) {
+    console.error(error);
+    panel.notification.error(panel.t("error"));
+    return;
+  }
+
+  // Update content
+  for (const [key, value] of Object.entries(clone)) {
+    store.dispatch("content/update", [key, value]);
+  }
+
+  panel.view.isLoading = false;
+  panel.notification.success(
+    panel.t("johannschopplich.content-translator.notification.translated"),
+  );
+}
+
+async function updateModelDefaultContent() {
+  const { title, content } = await panel.api.get(panel.view.path, {
+    language: defaultLanguage.code,
+  });
+
+  defaultTitle.value = title;
+  defaultContent.value = content;
+}
+
+async function getSyncableContentForLanguage(language) {
+  const { content } = await panel.api.get(panel.view.path, {
+    language: language.code,
+  });
+
+  return Object.fromEntries(
+    Object.entries(content).filter(([key]) =>
+      syncableFields.value.includes(key),
+    ),
+  );
+}
+
+function openModal(text, callback) {
+  if (!confirm.value) {
+    callback?.();
+    return;
+  }
+
+  panel.dialog.open({
+    component: "k-text-dialog",
+    props: { text },
+    on: {
+      submit: () => {
+        panel.dialog.close();
         callback?.();
-        return;
-      }
-
-      this.$panel.dialog.open({
-        component: "k-text-dialog",
-        props: { text },
-        on: {
-          submit: () => {
-            this.$panel.dialog.close();
-            callback?.();
-          },
-        },
-      });
+      },
     },
-  },
-};
+  });
+}
 </script>
 
 <template>
   <k-section v-if="config" :label="label">
-    <k-box v-if="!$panel.multilang" theme="info">
+    <k-box v-if="!panel.multilang" theme="info">
       <k-text>
         This section requires multi-language support to be enabled.
       </k-text>
@@ -192,8 +210,8 @@ export default {
     <k-box v-else-if="config.allowDefaultLanguageOverwrite" theme="none">
       <k-button-group layout="collapsed">
         <k-button
-          v-for="language in $panel.languages.filter(
-            (language) => language.code !== $panel.language.code,
+          v-for="language in panel.languages.filter(
+            (language) => language.code !== panel.language.code,
           )"
           v-show="syncableFields.length"
           :key="language.code"
@@ -201,7 +219,7 @@ export default {
           variant="filled"
           @click="
             openModal(
-              $t('johannschopplich.content-translator.dialog.syncFrom', {
+              panel.t('johannschopplich.content-translator.dialog.syncFrom', {
                 language: language.name,
               }),
               () => syncModelContent(language),
@@ -209,7 +227,7 @@ export default {
           "
         >
           {{
-            $t("johannschopplich.content-translator.importFrom", {
+            panel.t("johannschopplich.content-translator.importFrom", {
               language: language.code.toUpperCase(),
             })
           }}
@@ -221,16 +239,16 @@ export default {
           theme="notice"
           @click="
             openModal(
-              $t('johannschopplich.content-translator.dialog.translate', {
-                language: $panel.language.name,
+              panel.t('johannschopplich.content-translator.dialog.translate', {
+                language: panel.language.name,
               }),
-              () => translateModelContent($panel.language),
+              () => translateModelContent(panel.language),
             )
           "
         >
           {{
-            $t("johannschopplich.content-translator.translate", {
-              language: $panel.language.code.toUpperCase(),
+            panel.t("johannschopplich.content-translator.translate", {
+              language: panel.language.code.toUpperCase(),
             })
           }}
         </k-button>
@@ -241,38 +259,41 @@ export default {
         <k-button-group layout="collapsed">
           <k-button
             v-show="syncableFields.length"
-            :disabled="$panel.language.default"
+            :disabled="panel.language.default"
             size="sm"
             variant="filled"
             @click="
               openModal(
-                $t('johannschopplich.content-translator.dialog.sync', {
+                panel.t('johannschopplich.content-translator.dialog.sync', {
                   language: defaultLanguage.name,
                 }),
                 () => syncModelContent(),
               )
             "
           >
-            {{ $t("johannschopplich.content-translator.sync") }}
+            {{ panel.t("johannschopplich.content-translator.sync") }}
           </k-button>
           <k-button
-            :disabled="$panel.language.default"
+            :disabled="panel.language.default"
             icon="translate"
             size="sm"
             variant="filled"
             theme="notice"
             @click="
               openModal(
-                $t('johannschopplich.content-translator.dialog.translate', {
-                  language: $panel.language.name,
-                }),
-                () => translateModelContent($panel.language, defaultLanguage),
+                panel.t(
+                  'johannschopplich.content-translator.dialog.translate',
+                  {
+                    language: panel.language.name,
+                  },
+                ),
+                () => translateModelContent(panel.language, defaultLanguage),
               )
             "
           >
             {{
-              $t("johannschopplich.content-translator.translate", {
-                language: $panel.language.code.toUpperCase(),
+              panel.t("johannschopplich.content-translator.translate", {
+                language: panel.language.code.toUpperCase(),
               })
             }}
           </k-button>
@@ -280,11 +301,13 @@ export default {
       </k-box>
 
       <k-box
-        v-show="$panel.language.default"
+        v-show="panel.language.default"
         class="kct-mt-1"
         theme="none"
         :text="
-          $t('johannschopplich.content-translator.help.disallowDefaultLanguage')
+          panel.t(
+            'johannschopplich.content-translator.help.disallowDefaultLanguage',
+          )
         "
       />
     </template>
