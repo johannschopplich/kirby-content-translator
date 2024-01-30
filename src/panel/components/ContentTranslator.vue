@@ -113,7 +113,7 @@ async function syncModelContent(language) {
 
   if (translateTitle.value) {
     await panel.api.patch(`${panel.view.path}/title`, { title });
-    panel.view.refresh();
+    await panel.view.reload();
   }
 
   panel.notification.success(
@@ -152,10 +152,12 @@ async function translateModelContent(targetLanguage, sourceLanguage) {
     await panel.api.patch(`${panel.view.path}/title`, {
       title: result.text,
     });
-    panel.view.refresh();
+    // Reload will also end loading state
+    await panel.view.reload();
+  } else {
+    panel.view.isLoading = false;
   }
 
-  panel.view.isLoading = false;
   panel.notification.success(
     panel.t("johannschopplich.content-translator.notification.translated"),
   );
