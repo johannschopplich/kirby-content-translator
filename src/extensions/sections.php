@@ -40,7 +40,8 @@ return [
                 }
 
                 return $translatableBlocks;
-            }
+            },
+            'title' => fn ($title = false) => $title
         ],
         'computed' => [
             'config' => function () {

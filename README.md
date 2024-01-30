@@ -102,6 +102,7 @@ The following blueprint configuration options are available for the `content-tra
 | `translatableFields`          | Array           | `[]`                                                        | The fields that should be translated when the user clicks the translate button.                                                                                                                 |
 | `translatableStructureFields` | Array           | `[]`                                                        | The fields inside sections that should be translated. For the section field itself, add its field key to the `translatableFields` array.                                                        |
 | `translatableBlocks`          | Array           | See [`sections.php`](./src/extensions/sections.php#L21-L30) | The block names and their corresponding fields that should be translated when the user clicks the translate button. By default, all Kirby blocks that include a text-like field are translated. |
+| `title`                       | Boolean         | `false`                                                     | Whether the title of the model should be synchronised and translated.                                                                                                                           |
 | `label`                       | String or Array | See [`translations.php`](./src/extensions/translations.php) | Optionally, you can translate the section label.                                                                                                                                                |
 | `confirm`                     | Boolean         | `true`                                                      | Disable the confirmation dialog before either the synchronisation or translation process is started.                                                                                            |
 
@@ -154,6 +155,21 @@ translatableBlocks:
   myBlockWithSections:
     - mySection
 ```
+
+### Translating the Title
+
+You can enable to synchronise and translate the title of a model by setting the `title` section property to `true`:
+
+```yml
+sections:
+  contentTranslator:
+    type: content-translator
+    title: true
+```
+
+> [!IMPORTANT]
+> Technically speaking, the title is not part of the content of a Kirby model. That's why you can't revert changes made to the title, as opposed to fields. Also, when synchronising content, the title will be overwritten.
+> Because of these caveats, have to opt-in to synchronise and translate the title.
 
 ### Section Label
 

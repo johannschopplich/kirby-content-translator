@@ -9,6 +9,7 @@ import {
   useStore,
 } from "kirbyuse";
 import { section } from "kirbyuse/props";
+import { TRANSLATION_API_ROUTE } from "../constants";
 import { useTranslation } from "../composables/translation";
 
 export default defineComponent({
@@ -33,6 +34,7 @@ const syncableFields = ref([]);
 const translatableFields = ref([]);
 const translatableStructureFields = ref([]);
 const translatableBlocks = ref([]);
+const translateTitle = ref(false);
 
 // Section computed
 const config = ref();
@@ -79,6 +81,7 @@ const translatableContent = computed(() =>
     response.syncableFields ?? response.config.syncableFields ?? [];
   translatableBlocks.value =
     response.translatableBlocks ?? response.config.translatableBlocks ?? [];
+  translateTitle.value = response.title ?? response.config.title ?? false;
   config.value = response.config ?? {};
 
   // Re-fetch default content whenever the page gets saved
@@ -96,14 +99,28 @@ function t(value) {
 }
 
 async function syncModelContent(language) {
+  let _title = defaultTitle.value;
+  let _syncableContent = syncableContent.value;
+
   // If a language is passed, use the content of that language as the source,
   // otherwise use the default language
-  const _syncableContent = language
-    ? await getSyncableContentForLanguage(language)
-    : syncableContent.value;
+  if (language) {
+    const { title, content } = await getCurrentViewData(language);
+    _title = title;
+    _syncableContent = Object.fromEntries(
+      Object.entries(content).filter(([key]) =>
+        syncableFields.value.includes(key),
+      ),
+    );
+  }
 
   for (const [key, value] of Object.entries(_syncableContent)) {
     store.dispatch("content/update", [key, value]);
+  }
+
+  if (translateTitle.value) {
+    await panel.api.patch(panel.view.path, { title: _title });
+    panel.view.refresh();
   }
 
   panel.notification.success(
@@ -113,9 +130,6 @@ async function syncModelContent(language) {
 
 async function translateModelContent(targetLanguage, sourceLanguage) {
   panel.view.isLoading = true;
-
-  // TODO: Translate title
-  // panel.api.patch(panel.view.path, { title });
 
   const clone = JSON.parse(JSON.stringify(translatableContent.value));
   try {
@@ -136,6 +150,16 @@ async function translateModelContent(targetLanguage, sourceLanguage) {
     store.dispatch("content/update", [key, value]);
   }
 
+  if (translateTitle.value) {
+    const response = await panel.api.post(TRANSLATION_API_ROUTE, {
+      sourceLanguage: sourceLanguage?.code,
+      targetLanguage: targetLanguage.code,
+      text: panel.view.title,
+    });
+    await panel.api.patch(panel.view.path, { title: response.result.text });
+    panel.view.refresh();
+  }
+
   panel.view.isLoading = false;
   panel.notification.success(
     panel.t("johannschopplich.content-translator.notification.translated"),
@@ -143,24 +167,15 @@ async function translateModelContent(targetLanguage, sourceLanguage) {
 }
 
 async function updateModelDefaultContent() {
-  const { title, content } = await panel.api.get(panel.view.path, {
-    language: defaultLanguage.code,
-  });
-
+  const { title, content } = await getCurrentViewData(defaultLanguage);
   defaultTitle.value = title;
   defaultContent.value = content;
 }
 
-async function getSyncableContentForLanguage(language) {
-  const { content } = await panel.api.get(panel.view.path, {
+function getCurrentViewData(language) {
+  return panel.api.get(panel.view.path, {
     language: language.code,
   });
-
-  return Object.fromEntries(
-    Object.entries(content).filter(([key]) =>
-      syncableFields.value.includes(key),
-    ),
-  );
 }
 
 function openModal(text, callback) {

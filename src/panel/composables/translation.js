@@ -1,4 +1,5 @@
 import { useApi } from "kirbyuse";
+import { TRANSLATION_API_ROUTE } from "../constants";
 
 const QUEUE_LIMIT = 5;
 
@@ -28,14 +29,11 @@ export function useTranslation() {
           // Handle strings as field value
           if (typeof structureItem[key] === "string") {
             tasks.push(async () => {
-              const response = await api.post(
-                "__content-translator__/translate",
-                {
-                  sourceLanguage,
-                  targetLanguage,
-                  text: structureItem[key],
-                },
-              );
+              const response = await api.post(TRANSLATION_API_ROUTE, {
+                sourceLanguage,
+                targetLanguage,
+                text: structureItem[key],
+              });
               structureItem[key] = response.result.text;
             });
           }
@@ -48,14 +46,11 @@ export function useTranslation() {
                 for (const index in structureItem[key]) {
                   if (!structureItem[key][index]) continue;
 
-                  const response = await api.post(
-                    "__content-translator__/translate",
-                    {
-                      sourceLanguage,
-                      targetLanguage,
-                      text: structureItem[key][index],
-                    },
-                  );
+                  const response = await api.post(TRANSLATION_API_ROUTE, {
+                    sourceLanguage,
+                    targetLanguage,
+                    text: structureItem[key][index],
+                  });
                   structureItem[key][index] = response.result.text;
                 }
               });
@@ -106,14 +101,11 @@ export function useTranslation() {
           }
 
           tasks.push(async () => {
-            const response = await api.post(
-              "__content-translator__/translate",
-              {
-                sourceLanguage,
-                targetLanguage,
-                text: block.content[blockFieldKey],
-              },
-            );
+            const response = await api.post(TRANSLATION_API_ROUTE, {
+              sourceLanguage,
+              targetLanguage,
+              text: block.content[blockFieldKey],
+            });
             block.content[blockFieldKey] = response.result.text;
           });
         }
@@ -126,7 +118,7 @@ export function useTranslation() {
       // Handle strings as field value
       if (typeof obj[key] === "string") {
         tasks.push(async () => {
-          const response = await api.post("__content-translator__/translate", {
+          const response = await api.post(TRANSLATION_API_ROUTE, {
             sourceLanguage,
             targetLanguage,
             text: obj[key],
@@ -141,14 +133,11 @@ export function useTranslation() {
         if (obj[key].every((i) => typeof i === "string")) {
           obj[key] = await Promise.all(
             obj[key].filter(Boolean).map(async (item) => {
-              const response = await api.post(
-                "__content-translator__/translate",
-                {
-                  sourceLanguage,
-                  targetLanguage,
-                  text: item,
-                },
-              );
+              const response = await api.post(TRANSLATION_API_ROUTE, {
+                sourceLanguage,
+                targetLanguage,
+                text: item,
+              });
               return response.result.text;
             }),
           );

@@ -3,14 +3,14 @@
 return [
     'en' => [
         'johannschopplich.content-translator.label' => 'Content Translator',
-        'johannschopplich.content-translator.sync' => 'Synchronize',
+        'johannschopplich.content-translator.sync' => 'Synchronise',
         'johannschopplich.content-translator.importFrom' => 'Import from {language}',
         'johannschopplich.content-translator.translate' => 'Translate to {language}',
         'johannschopplich.content-translator.help.disallowDefaultLanguage' => 'Content can only be synchronised and translated for secondary languages.',
         'johannschopplich.content-translator.dialog.sync' => 'The fields of the current language will be overwritten with the contents of the default language ({language}). Continue?',
         'johannschopplich.content-translator.dialog.syncFrom' => 'The fields of the current language will be overwritten with the contents of <strong>{language}</strong>. Continue?',
         'johannschopplich.content-translator.dialog.translate' => 'The contents of the current language will be translated to <strong>{language}</strong>. Continue?',
-        'johannschopplich.content-translator.notification.synced' => 'Content synchronized',
+        'johannschopplich.content-translator.notification.synced' => 'Content synchronised',
         'johannschopplich.content-translator.notification.translated' => 'Content translated'
     ],
     'de' => [
