@@ -12,16 +12,17 @@ import { section } from "kirbyuse/props";
 import { TRANSLATION_API_ROUTE } from "../constants";
 import { useTranslation } from "../composables/translation";
 
+const propsDefinition = {
+  ...section,
+};
+
 export default defineComponent({
   inheritAttrs: false,
-  props: {
-    ...section,
-  },
 });
 </script>
 
 <script setup>
-const props = defineProps({});
+const props = defineProps(propsDefinition);
 
 const panel = usePanel();
 const store = useStore();

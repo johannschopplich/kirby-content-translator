@@ -18,8 +18,8 @@ devDependencies:
     specifier: ^8.56.0
     version: 8.56.0
   kirbyup:
-    specifier: ^3.1.1
-    version: 3.1.1(rollup@4.9.6)
+    specifier: ^3.1.2
+    version: 3.1.2(rollup@4.9.6)
   kirbyuse:
     specifier: ^0.4.1
     version: 0.4.1
@@ -2750,8 +2750,8 @@ packages:
       json-buffer: 3.0.1
     dev: true
 
-  /kirbyup@3.1.1(rollup@4.9.6):
-    resolution: {integrity: sha512-U5Mqa5SGbdIaYGFxODJwqllJ7tJvHEtK6RQg3T3fNJUZOmGFDLSbOVZMyDMiwlgDUjr93v+U2wwpNM532ssuew==}
+  /kirbyup@3.1.2(rollup@4.9.6):
+    resolution: {integrity: sha512-4vJA5saN9ErllBRdQslWYK2XOr8G3A4Pxnv4WjSSzcBMUuiInX8FotdfduVsOdJTnq9oUUxsLAav8scRzf735w==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
