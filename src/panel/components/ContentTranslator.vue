@@ -1,7 +1,6 @@
 <script>
 import {
   computed,
-  defineComponent,
   onBeforeUnmount,
   ref,
   usePanel,
@@ -16,9 +15,9 @@ const propsDefinition = {
   ...section,
 };
 
-export default defineComponent({
+export default {
   inheritAttrs: false,
-});
+};
 </script>
 
 <script setup>
