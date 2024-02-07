@@ -136,24 +136,24 @@ sections:
 
 ### Translatable Structure Fields
 
-The plugin translates fields within structures. The structures may be part of the current model or a block. For example, if you have a `sections` field with a `text` field inside, you can translate the `text` field by first adding it to the `translatableStructureFields` array:
+The plugin translates fields within structures. The structures may be part of the current model or a block. For example, if you have a `structure` field with a `text` field inside, you can translate the `text` field by first adding it to the `translatableStructureFields` array:
 
 ```yml
 translatableStructureFields:
   - text
 ```
 
-Then, depending on whether the `sections` field is part of the current model or a block, you need to add the key of the `sections` field to the `translatableFields` or `translatableBlocks` array:
+Then, depending on whether the `structure` field is part of the current model or a block, you need to add the key of the `structure` field to the `translatableFields` or `translatableBlocks` array:
 
 ```yml
-# When your section is part of the current model:
+# When your structure is part of the current model:
 translatableFields:
-  - mySection
+  - myStructure
 
-## When your section is part of a block:
+# Or else, if your structure is part of a block:
 translatableBlocks:
-  myBlockWithSections:
-    - mySection
+  myBlockWithStructure:
+    - structureInBlock
 ```
 
 ### Translating the Title
