@@ -78,11 +78,13 @@ const translatableContent = computed(() =>
 
   // Re-fetch default content whenever the page gets saved
   panel.events.on("model.update", updateModelDefaultLanguageData);
+  panel.events.on("page.changeTitle", updateModelDefaultLanguageData);
   updateModelDefaultLanguageData();
 })();
 
 onBeforeUnmount(() => {
   panel.events.off("model.update", updateModelDefaultLanguageData);
+  panel.events.off("page.changeTitle", updateModelDefaultLanguageData);
 });
 
 function t(value) {
