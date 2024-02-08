@@ -3,12 +3,46 @@
 use Kirby\Http\Remote;
 use Kirby\Http\Response;
 
+$SUPPORTED_SOURCE_LANGUAGES = [
+    'AR',
+    'BG',
+    'CS',
+    'DA',
+    'DE',
+    'EL',
+    'EN',
+    'ES',
+    'ET',
+    'FI',
+    'FR',
+    'HU',
+    'ID',
+    'IT',
+    'JA',
+    'KO',
+    'LT',
+    'LV',
+    'NB',
+    'NL',
+    'PL',
+    'PT',
+    'RO',
+    'RU',
+    'SK',
+    'SL',
+    'SV',
+    'TR',
+    'UK',
+    'ZH'
+];
+
+
 return [
     'routes' => fn (\Kirby\Cms\App $kirby) => [
         [
             'pattern' => '__content-translator__/translate',
             'method' => 'POST',
-            'action' => function () use ($kirby) {
+            'action' => function () use ($kirby, $SUPPORTED_SOURCE_LANGUAGES) {
                 $request = $kirby->request();
                 $text = $request->get('text');
                 $sourceLanguage = $request->get('sourceLanguage');
@@ -48,6 +82,14 @@ return [
                     ], 500);
                 }
 
+                if (!empty($sourceLanguage)) {
+                    $sourceLanguage = strtoupper($sourceLanguage);
+
+                    if (!in_array($sourceLanguage, $SUPPORTED_SOURCE_LANGUAGES, true)) {
+                        $sourceLanguage = null;
+                    }
+                }
+
                 $response = Remote::request($isAuthKeyFreeAccount ? $apiUrlFree : $apiUrlPro, [
                     'method' => 'POST',
                     'headers' => [
@@ -56,7 +98,7 @@ return [
                     ],
                     'data' => json_encode([
                         'text' => [$text],
-                        // 'source_lang' => strtoupper($sourceLanguage),
+                        'source_lang' => $sourceLanguage,
                         'target_lang' => strtoupper($targetLanguage)
                     ])
                 ]);
