@@ -23,7 +23,7 @@ For the following preview, I used the [example section blueprint](#panel-section
 
 The default language in the example is English. The secondary language is German, to which the content is first synchronised (copied) and then translated.
 
-![Preview of the Kirby Content Translator Panel section](./.github/panel-preview.mp4)
+![Preview of the Kirby Content Translator Panel section](./.github/panel-preview.gif)
 
 ## Requirements
 
