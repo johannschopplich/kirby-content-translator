@@ -11,7 +11,8 @@ prettier.config.mjs export-ignore
 tailwind.config.cjs export-ignore
 
 # Development files
-.vscode export-ignore
+.vscode/ export-ignore
+tools/ export-ignore
 .editorconfig export-ignore
 composer.lock export-ignore
 eslint.config.js export-ignore

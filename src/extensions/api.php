@@ -36,7 +36,6 @@ $SUPPORTED_SOURCE_LANGUAGES = [
     'ZH'
 ];
 
-
 return [
     'routes' => fn (\Kirby\Cms\App $kirby) => [
         [
