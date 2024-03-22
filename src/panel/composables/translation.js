@@ -34,7 +34,7 @@ export function useTranslation() {
                 targetLanguage,
                 text: structureItem[key],
               });
-              structureItem[key] = response.result.text;
+              structureItem[key] = response.text;
             });
           }
 
@@ -51,7 +51,7 @@ export function useTranslation() {
                     targetLanguage,
                     text: structureItem[key][index],
                   });
-                  structureItem[key][index] = response.result.text;
+                  structureItem[key][index] = response.text;
                 }
               });
             }
@@ -106,7 +106,7 @@ export function useTranslation() {
               targetLanguage,
               text: block.content[blockFieldKey],
             });
-            block.content[blockFieldKey] = response.result.text;
+            block.content[blockFieldKey] = response.text;
           });
         }
       }
@@ -123,7 +123,7 @@ export function useTranslation() {
             targetLanguage,
             text: obj[key],
           });
-          obj[key] = response.result.text;
+          obj[key] = response.text;
         });
       }
 
@@ -138,7 +138,7 @@ export function useTranslation() {
                 targetLanguage,
                 text: item,
               });
-              return response.result.text;
+              return response.text;
             }),
           );
           continue;

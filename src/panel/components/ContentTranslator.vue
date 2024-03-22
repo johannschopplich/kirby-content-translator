@@ -146,13 +146,13 @@ async function translateModelContent(targetLanguage, sourceLanguage) {
   }
 
   if (translateTitle.value) {
-    const { result } = await panel.api.post(TRANSLATION_API_ROUTE, {
+    const { text } = await panel.api.post(TRANSLATION_API_ROUTE, {
       sourceLanguage: sourceLanguage?.code,
       targetLanguage: targetLanguage.code,
       text: panel.view.title,
     });
     await panel.api.patch(`${panel.view.path}/title`, {
-      title: result.text,
+      title: text,
     });
     // Reload will also end loading state
     await panel.view.reload();

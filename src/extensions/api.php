@@ -1,7 +1,10 @@
 <?php
 
+use Kirby\Cms\App;
+use Kirby\Exception\AuthException;
+use Kirby\Exception\LogicException;
+use Kirby\Exception\BadMethodCallException;
 use Kirby\Http\Remote;
-use Kirby\Http\Response;
 
 $SUPPORTED_SOURCE_LANGUAGES = [
     'AR',
@@ -37,7 +40,7 @@ $SUPPORTED_SOURCE_LANGUAGES = [
 ];
 
 return [
-    'routes' => fn (\Kirby\Cms\App $kirby) => [
+    'routes' => fn (App $kirby) => [
         [
             'pattern' => '__content-translator__/translate',
             'method' => 'POST',
@@ -48,10 +51,7 @@ return [
                 $targetLanguage = $request->get('targetLanguage');
 
                 if (!$text || !$targetLanguage) {
-                    return Response::json([
-                        'code' => 400,
-                        'status' => 'Bad Request'
-                    ], 400);
+                    throw new BadMethodCallException('Missing required parameters');
                 }
 
                 $translateFn = $kirby->option('johannschopplich.content-translator.translateFn');
@@ -59,13 +59,9 @@ return [
                 if ($translateFn && is_callable($translateFn)) {
                     $result = $translateFn($text, $sourceLanguage, $targetLanguage);
 
-                    return Response::json([
-                        'code' => 201,
-                        'status' => 'Created',
-                        'result' => [
-                            'text' => $result
-                        ]
-                    ], 201);
+                    return [
+                        'text' => $result
+                    ];
                 }
 
                 // Default to DeepL API
@@ -75,10 +71,7 @@ return [
                 $isAuthKeyFreeAccount = str_ends_with($authKey, ':fx');
 
                 if (empty($authKey)) {
-                    return Response::json([
-                        'code' => 500,
-                        'status' => 'Internal Server Error'
-                    ], 500);
+                    throw new AuthException('Missing DeepL API key');
                 }
 
                 if (!empty($sourceLanguage)) {
@@ -105,19 +98,12 @@ return [
                 $data = $response->json();
 
                 if ($response->code() !== 200 || !isset($data['translations'][0]['text'])) {
-                    return Response::json([
-                        'code' => 500,
-                        'status' => 'Internal Server Error'
-                    ], 500);
+                    throw new LogicException('Failed to translate text');
                 }
 
-                return Response::json([
-                    'code' => 201,
-                    'status' => 'Created',
-                    'result' => [
-                        'text' => $data['translations'][0]['text']
-                    ]
-                ], 201);
+                return [
+                    'text' => $data['translations'][0]['text']
+                ];
             }
         ]
     ]
