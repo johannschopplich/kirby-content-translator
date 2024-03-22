@@ -1,7 +1,6 @@
 import { useApi } from "kirbyuse";
+import pAll from "p-all";
 import { TRANSLATION_API_ROUTE } from "../constants";
-
-const QUEUE_LIMIT = 5;
 
 export function useTranslation() {
   const api = useApi();
@@ -177,7 +176,7 @@ export function useTranslation() {
 
     // Process translation tasks in batches
     try {
-      await processInBatches(tasks);
+      await pAll(tasks, { concurrency: 5 });
     } catch (error) {
       console.error(error);
       throw error;
@@ -191,14 +190,8 @@ export function useTranslation() {
   };
 }
 
-async function processInBatches(tasks, limit = QUEUE_LIMIT) {
-  for (let i = 0; i < tasks.length; i += limit) {
-    const batch = tasks.slice(i, i + limit);
-    await Promise.all(batch.map((task) => task()));
-  }
-}
-
 function toArray(value) {
+  value = value ?? [];
   return Array.isArray(value) ? value : [value];
 }
 

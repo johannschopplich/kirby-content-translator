@@ -23,6 +23,9 @@ devDependencies:
   kirbyuse:
     specifier: ^0.4.1
     version: 0.4.1
+  p-all:
+    specifier: ^5.0.0
+    version: 5.0.0
   prettier:
     specifier: ^3.2.5
     version: 3.2.5
@@ -3279,6 +3282,13 @@ packages:
       type-check: 0.4.0
     dev: true
 
+  /p-all@5.0.0:
+    resolution: {integrity: sha512-pofqu/1FhCVa+78xNAptCGc9V45exFz2pvBRyIvgXkNM0Rh18Py7j8pQuSjA+zpabI46v9hRjNWmL9EAFcEbpw==}
+    engines: {node: '>=16'}
+    dependencies:
+      p-map: 6.0.0
+    dev: true
+
   /p-limit@2.3.0:
     resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
     engines: {node: '>=6'}
@@ -3319,6 +3329,11 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       p-limit: 4.0.0
+    dev: true
+
+  /p-map@6.0.0:
+    resolution: {integrity: sha512-T8BatKGY+k5rU+Q/GTYgrEf2r4xRMevAN5mtXc2aPc4rS1j3s+vWTaO2Wag94neXuCAUAs8cxBL9EeB5EA6diw==}
+    engines: {node: '>=16'}
     dev: true
 
   /p-try@2.2.0:
