@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier \"src/panel/**\" --write",
-    "release": "pnpm run build && bumpp --all"
+    "release": "pnpm run build && bumpp --all --execute \"npx zx scripts/pre-release.mjs\""
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.9.0",
@@ -23,6 +23,7 @@
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.12",
     "tailwindcss": "^3.4.1",
-    "ufo": "^1.5.3"
+    "ufo": "^1.5.3",
+    "zx": "^8.0.1"
   }
 }
