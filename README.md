@@ -11,7 +11,7 @@ With a single click, an editor can:
 
 ## Key Features
 
-- 🚌 Supports **writer**, **blocks**, **layouts** and other Kirby fields
+- 🚌 Supports **writer**, **blocks**, **structure** and many more Kirby fields
 - 🧮 Configure which fields should be translated
 - 🌐 Translate all fields with one click
 - 🌝 Panel buttons
@@ -100,7 +100,8 @@ The following blueprint configuration options are available for the `content-tra
 | ----------------------------- | --------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `syncableFields`              | Array           | `[]`                                                        | The fields that should be copied from the default language to the secondary language when the user is editing content in any language but the default language.                                 |
 | `translatableFields`          | Array           | `[]`                                                        | The fields that should be translated when the user clicks the translate button.                                                                                                                 |
-| `translatableStructureFields` | Array           | `[]`                                                        | The fields inside sections that should be translated. For the section field itself, add its field key to the `translatableFields` array.                                                        |
+| `translatableStructureFields` | Array           | `[]`                                                        | The fields inside a `structure` field that should be translated. For the `type: structure` field itself, add its blueprint key to the `translatableFields` array.                               |
+| `translatableObjectFields`    | Array           | `[]`                                                        | The fields inside an `object` field that should be translated. For the `type: object` field itself, add its blueprint key to the `translatableFields` array.                                    |
 | `translatableBlocks`          | Array           | See [`sections.php`](./src/extensions/sections.php#L21-L30) | The block names and their corresponding fields that should be translated when the user clicks the translate button. By default, all Kirby blocks that include a text-like field are translated. |
 | `title`                       | Boolean         | `false`                                                     | Whether the title of the model should be synchronised and translated.                                                                                                                           |
 | `label`                       | String or Array | See [`translations.php`](./src/extensions/translations.php) | Optionally, you can translate the section label.                                                                                                                                                |
@@ -154,6 +155,28 @@ translatableFields:
 translatableBlocks:
   myBlockWithStructure:
     - structureInBlock
+```
+
+### Translatable Object Fields
+
+The plugin can translate fields within `type: object` fields. The objects may be part of the current model or a block. For example, if you have an `object` field with a `label` field inside, you can translate the `label` field by first adding it to the `translatableObjectFields` array:
+
+```yml
+translatableObjectFields:
+  - label
+```
+
+Then, depending on whether the `object` field is part of the current model or a block, you need to add the key of the `object` field to the `translatableFields` or `translatableBlocks` array:
+
+```yml
+# When your object is part of the current model:
+translatableFields:
+  - myObject
+
+# Or else, if your object is part of a block:
+translatableBlocks:
+  myBlockWithObject:
+    - objectInBlock
 ```
 
 ### Translating the Title

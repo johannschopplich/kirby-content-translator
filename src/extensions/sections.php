@@ -28,6 +28,13 @@ return [
 
                 return $translatableStructureFields;
             },
+            'translatableObjectFields' => function ($translatableObjectFields = null) {
+                if (is_array($translatableObjectFields)) {
+                    return array_map('strtolower', $translatableObjectFields);
+                }
+
+                return $translatableObjectFields;
+            },
             'translatableBlocks' => function ($translatableBlocks = null) {
                 if (is_array($translatableBlocks)) {
                     $translatableBlocks = array_change_key_case($translatableBlocks, CASE_LOWER);
@@ -44,6 +51,13 @@ return [
             'title' => fn ($title = false) => $title
         ],
         'computed' => [
+            'fields' => function () {
+                /** @var \Kirby\Cms\Page */
+                $model = $this->model();
+                $fields = $model->blueprint()->fields();
+                // Lowercase fields keys, sine the Kirby Panel content object keys are lowercase
+                return array_change_key_case($fields, CASE_LOWER);
+            },
             'config' => function () {
                 /** @var \Kirby\Cms\App $kirby */
                 $kirby = $this->kirby();

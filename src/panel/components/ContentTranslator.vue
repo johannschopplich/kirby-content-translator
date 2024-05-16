@@ -33,10 +33,12 @@ const confirm = ref(true);
 const syncableFields = ref([]);
 const translatableFields = ref([]);
 const translatableStructureFields = ref([]);
+const translatableObjectFields = ref([]);
 const translatableBlocks = ref([]);
 const translateTitle = ref(false);
 
 // Section computed
+const fields = ref();
 const config = ref();
 
 // Generic data
@@ -63,17 +65,22 @@ const translatableContent = computed(() =>
   label.value =
     t(response.label) || panel.t("johannschopplich.content-translator.label");
   confirm.value = response.confirm ?? response.config.confirm ?? true;
+  syncableFields.value =
+    response.syncableFields ?? response.config.syncableFields ?? [];
   translatableFields.value =
     response.translatableFields ?? response.config.translatableFields ?? [];
   translatableStructureFields.value =
     response.translatableStructureFields ??
     response.config.translatableStructureFields ??
     [];
-  syncableFields.value =
-    response.syncableFields ?? response.config.syncableFields ?? [];
+  translatableObjectFields.value =
+    response.translatableObjectFields ??
+    response.config.translatableObjectFields ??
+    [];
   translatableBlocks.value =
     response.translatableBlocks ?? response.config.translatableBlocks ?? [];
   translateTitle.value = response.title ?? response.config.title ?? false;
+  fields.value = response.fields ?? {};
   config.value = response.config ?? {};
 
   // Re-fetch default content whenever the page gets saved
@@ -131,7 +138,9 @@ async function translateModelContent(targetLanguage, sourceLanguage) {
     await recursiveTranslateContent(clone, {
       sourceLanguage: sourceLanguage?.code,
       targetLanguage: targetLanguage.code,
+      fields: fields.value,
       translatableStructureFields: translatableStructureFields.value,
+      translatableObjectFields: translatableObjectFields.value,
       translatableBlocks: translatableBlocks.value,
     });
   } catch (error) {

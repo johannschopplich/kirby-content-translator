@@ -10,52 +10,63 @@ export function useTranslation() {
     {
       sourceLanguage,
       targetLanguage,
+      fields = {},
       translatableStructureFields = [],
+      translatableObjectFields = [],
       translatableBlocks = {},
     },
   ) => {
     const tasks = [];
+
+    const handleGenericObject = (
+      /** @type {Record<string, any[]>} */
+      item,
+      /** @type {string[]} */
+      translatableFields,
+    ) => {
+      for (const key in item) {
+        if (!translatableFields.includes(key)) continue;
+        if (!item[key]) continue;
+
+        // Handle strings as field value
+        if (typeof item[key] === "string") {
+          tasks.push(async () => {
+            const response = await api.post(TRANSLATION_API_ROUTE, {
+              sourceLanguage,
+              targetLanguage,
+              text: item[key],
+            });
+            item[key] = response.text;
+          });
+        }
+
+        // Handle arrays as field value
+        else if (Array.isArray(item[key])) {
+          // Handle array of strings
+          if (item[key].every((i) => typeof i === "string")) {
+            tasks.push(async () => {
+              for (const index in item[key]) {
+                if (!item[key][index]) continue;
+
+                const response = await api.post(TRANSLATION_API_ROUTE, {
+                  sourceLanguage,
+                  targetLanguage,
+                  text: item[key][index],
+                });
+                item[key][index] = response.text;
+              }
+            });
+          }
+        }
+      }
+    };
 
     const handleStructureField = (
       /** @type {Record<string, any[]>} */
       structure,
     ) => {
       for (const structureItem of structure) {
-        for (const key in structureItem) {
-          if (!translatableStructureFields.includes(key)) continue;
-          if (!structureItem[key]) continue;
-
-          // Handle strings as field value
-          if (typeof structureItem[key] === "string") {
-            tasks.push(async () => {
-              const response = await api.post(TRANSLATION_API_ROUTE, {
-                sourceLanguage,
-                targetLanguage,
-                text: structureItem[key],
-              });
-              structureItem[key] = response.text;
-            });
-          }
-
-          // Handle array as field value
-          else if (Array.isArray(structureItem[key])) {
-            // Handle array of strings
-            if (structureItem[key].every((i) => typeof i === "string")) {
-              tasks.push(async () => {
-                for (const index in structureItem[key]) {
-                  if (!structureItem[key][index]) continue;
-
-                  const response = await api.post(TRANSLATION_API_ROUTE, {
-                    sourceLanguage,
-                    targetLanguage,
-                    text: structureItem[key][index],
-                  });
-                  structureItem[key][index] = response.text;
-                }
-              });
-            }
-          }
-        }
+        handleGenericObject(structureItem, translatableStructureFields);
       }
     };
 
@@ -87,15 +98,18 @@ export function useTranslation() {
           // Handle structures in blocks
           if (
             Array.isArray(block.content[blockFieldKey]) &&
-            block.content[blockFieldKey].every(
-              (i) =>
-                isObject(i) &&
-                Object.keys(i).some((j) =>
-                  translatableStructureFields.includes(j),
-                ),
-            )
+            block.content[blockFieldKey].every((i) => isObject(i))
           ) {
             handleStructureField(block.content[blockFieldKey]);
+            continue;
+          }
+
+          // Handle object fields in blocks
+          if (isObject(block.content[blockFieldKey])) {
+            handleGenericObject(
+              block.content[blockFieldKey],
+              translatableObjectFields,
+            );
             continue;
           }
 
@@ -126,7 +140,7 @@ export function useTranslation() {
         });
       }
 
-      // Handle array as field value
+      // Handle arrays as field value
       else if (Array.isArray(obj[key]) && obj[key].length > 0) {
         // Handle array of strings
         if (obj[key].every((i) => typeof i === "string")) {
@@ -144,7 +158,7 @@ export function useTranslation() {
         }
 
         // Detect and handle layout fields
-        if (obj[key].every((i) => isObject(i) && i.columns)) {
+        if (fields[key]?.type === "layout") {
           for (const layout of obj[key]) {
             for (const column of layout.columns) {
               handleBlocksField(column.blocks);
@@ -154,23 +168,21 @@ export function useTranslation() {
         }
 
         // Detect and handle block fields
-        if (obj[key].every((i) => isObject(i) && i.content)) {
+        if (fields[key]?.type === "blocks") {
           handleBlocksField(obj[key]);
         }
 
         // Detect and handle structure fields
-        if (
-          obj[key].every(
-            (i) =>
-              isObject(i) &&
-              Object.keys(i).some((j) =>
-                translatableStructureFields.includes(j),
-              ),
-          )
-        ) {
+        if (fields[key]?.type === "structure") {
           handleStructureField(obj[key]);
           continue;
         }
+      }
+
+      // Detect and handle object fields
+      if (fields[key]?.type === "object" && isObject(obj[key])) {
+        handleGenericObject(obj[key], translatableObjectFields);
+        continue;
       }
     }
 
