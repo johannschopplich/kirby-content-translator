@@ -5,6 +5,14 @@
 /node_modules
 /vendor
 
+# Playground files
+.env
+.license
+/playground/public/media/*
+/playground/storage/accounts/*
+/playground/storage/cache/*
+/playground/storage/sessions/*
+
 # Cache and temporary files
 /.cache
 /.php-cs-fixer.cache

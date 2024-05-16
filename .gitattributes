@@ -10,6 +10,9 @@ postcss.config.cjs export-ignore
 prettier.config.mjs export-ignore
 tailwind.config.cjs export-ignore
 
+# Playground files
+playground/ export-ignore
+
 # Development files
 .vscode/ export-ignore
 tools/ export-ignore

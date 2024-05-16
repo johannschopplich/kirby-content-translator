@@ -26,9 +26,14 @@
     "getkirby/composer-installer": "^1.2"
   },
   "require-dev": {
-    "getkirby/cms": "^4"
+    "getkirby/cms": "^4",
+    "vlucas/phpdotenv": "^5.6"
   },
   "scripts": {
+    "dev": [
+      "Composer\\Config::disableProcessTimeout",
+      "@php -S localhost:8000 -t playground/public vendor/getkirby/cms/router.php"
+    ],
     "csfix": "@php tools/phpcs/vendor/bin/php-cs-fixer fix",
     "dist": "composer install --no-dev --optimize-autoloader"
   },

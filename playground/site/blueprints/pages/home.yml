@@ -1,0 +1,33 @@
+title: Home
+
+columns:
+  - width: 2/3
+    fields:
+      blocks01:
+        type: blocks
+      structure01:
+        type: structure
+        fields:
+          text:
+            type: text
+      object01:
+        type: object
+        fields:
+          text:
+            type: text
+  - width: 1/3
+    sections:
+      contentTranslator:
+        type: content-translator
+        syncableFields:
+          - blocks01
+          - structure01
+          - object01
+        translatableFields:
+          - blocks01
+          - structure01
+          - object01
+        translatableStructureFields:
+          - text
+        translatableObjectFields:
+          - text
