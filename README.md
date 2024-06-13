@@ -1,4 +1,19 @@
-![Kirby Content Translator](./.github/kirby-content-translator.png)
+# This Project Moved to [kirby.tools/content-translator](https://kirby.tools/content-translator)
+
+> [!NOTE]
+>This plugin has evolved into [Kirby Content Translator v2](https://kirby.tools/content-translator) and is now available as a paid solution.
+>
+> While you can still use the v1 of the plugin, it will no longer receive updates or support. We recommend upgrading to the new Kirby Content Translator (Pro) plugin to benefit from the latest features and improvements, such as better support for nested fields and the PHP API.
+
+## New Features in v2
+
+- 🤿 Recursive translation of nested structures, objects, blocks, etc.
+- 👩‍🔧 [Programmatic API for developers](https://kirby.tools/docs/content-translator/php-api) – integrate content translation in CLI commands and all your custom workflows
+- 🧩 Sensible defaults and [much simpler configuration](https://kirby.tools/docs/content-translator/configuration)
+
+![Kirby Content Translator](./.github/kirby-tools-content-translator.png)
+
+****
 
 # Kirby Content Translator
 
@@ -16,14 +31,6 @@ With a single click, an editor can:
 - 🌐 Translate all fields with one click
 - 🌝 Panel buttons
 - 🧩 Use DeepL API or custom translation service
-
-## Preview
-
-For the following preview, I used the [example section blueprint](#panel-section) to synchronise the `description` and `text` fields, which are of type **writer** and **blocks**, respectively.
-
-The default language in the example is English. The secondary language is German, to which the content is first synchronised (copied) and then translated.
-
-![Preview of the Kirby Content Translator Panel section](./.github/panel-preview.gif)
 
 ## Requirements
 
