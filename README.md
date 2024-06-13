@@ -13,6 +13,8 @@
 
 ![Kirby Content Translator](./.github/kirby-tools-content-translator.png)
 
+Below you can find the documentation for the v1 of the plugin.
+
 ****
 
 # Kirby Content Translator
