@@ -1,7 +1,7 @@
 # This Project Moved to [kirby.tools/content-translator](https://kirby.tools/content-translator)
 
 > [!NOTE]
->This plugin has evolved into [Kirby Content Translator v2](https://kirby.tools/content-translator) and is now available as a paid solution.
+> This plugin has evolved into [Kirby Content Translator v2](https://kirby.tools/content-translator) and is now available as a paid solution.
 >
 > While you can still use the v1 of the plugin, it will no longer receive updates or support. We recommend upgrading to the new Kirby Content Translator (Pro) plugin to benefit from the latest features and improvements, such as better support for nested fields and the PHP API.
 
